@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "backend for scheduler131",
+  "description": "backend for scheduler",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
