@@ -5,11 +5,10 @@ const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 const {errorHandler} = require('./middlewares/errormiddleware');
-
+const connectDB = require('./config/db');
 // app
 const app = express();
-
-
+connectDB();
 
 // db
 mongoose.connect(process.env.MONGO_URI, {
