@@ -25,8 +25,6 @@ app.use(errorHandler); // this error handler work idk why. its supposed to make 
 
 // routes
 
-const testRoutes = require('./routes/test');
-app.use('/', testRoutes);
  
 app.use('/api/goals', require('./routes/goalroutes'));
 
