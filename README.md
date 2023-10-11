@@ -41,6 +41,6 @@ Before cloning the repository, it's essential to configure your Git settings to 
 ```bash
   cd ..
   cd server
-  npm install express mongoose cors morgan dotenv nodemon mongodb
+  npm install express mongoose cors morgan dotenv nodemon mongodb express-async-handler
 
 ```
