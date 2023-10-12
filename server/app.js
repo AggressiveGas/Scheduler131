@@ -32,9 +32,7 @@ app.use('/api/users', require('./routes/userroutes'));
 
 // error handler
 
-app.use(errorHandler); // this error handler work idk why. its supposed to make it so i dont get errors in html but idk by: @AggressiveGas  
-// FIXME(@AggressiveGas): i dont comprehend how to fix this error handler if anyone can fix please! it makes it hard to bug fix the api with big ass html error responces
-
+app.use(errorHandler); // cleans up errors so they dont show up in big html file
 
 // port
 
