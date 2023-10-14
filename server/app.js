@@ -28,12 +28,6 @@ app.use('/api/goals', require('./routes/goalroutes'));  // this is the route for
 app.use('/api/user', require('./routes/userroutes'));  // this is the route for the users
 
 
-
-// errorhandler
-app.use(errorHandler); // makes errors come up cleaner
-
-
-
 // error handler
 
 app.use(errorHandler); // cleans up errors so they dont show up in big html file
