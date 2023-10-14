@@ -6,20 +6,20 @@ const { token } = require('morgan')
 
 
 // @desc Register user
-// @route POST /api/users
+// @route POST /api/user
 // @access Public 
 const registerUser = asyncHandler(async (req, res) => {
-    const {name, email, password} = req.body
+    const {name, email, password} = req.body    // gets the name, email, and password from the body
 
-    if(!name || !email || !password){
-        res.status(400)
+    if(!name || !email || !password){   // checks if the fields are empty
+        res.status(400)                 // if they are, throw an error at status 400
         throw new Error('Please enter all fields')
     }
 
-    //check if the user already exists
+    // looks for user email in database and stores it in userExists
     const userExists = await User.findOne({email})
 
-    if(userExists){
+    if(userExists){ // if the user exists, throw an error at status 400
         res.status(400)
         throw new Error('User already exists')
     }
@@ -28,20 +28,20 @@ const registerUser = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10) // you have to generate a salt to hash the password
     const hashedPassword = await bcrypt.hash(password, salt) // this generates the password using the salt generated above. Takes the plain text pass and salt to gen the hash
 
-    const user = await User.create({
+    const user = await User.create({    // creates the user
         name,
         email,
         password: hashedPassword
     })
 
-    if(user){
+    if(user){   // if the user is created, send the user data back
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
             token: generateToken(user._id)
         })
-    } else {
+    } else {    // if the user is not created, throw an error at status 400
         res.status(400)
         throw new Error('Invalid user data')
     }
@@ -57,31 +57,85 @@ const loginUser = asyncHandler(async (req, res) => {
     // checks for the user email in the database
     const user = await User.findOne({email})
 
-    if(user && (await bcrypt.compare(password, user.password))){
+    if(user && (await bcrypt.compare(password, user.password))){    // if the user exists and the password matches, send the user data back
         res.json({
             _id: user._id,
             name: user.name,
             email: user.email,
             token: generateToken(user._id)
             })
-        } else {
+        } else {    // if the user does not exist or the password does not match, throw an error at status 401
             res.status(401)
             throw new Error('Invalid credentials')
         }
 })
 
-// @desc get user data
-// @route GET /api/users/me
-// @access private 
+// @desc get specific user data
+// @route GET /api/user/:id
+// @access public 
 const getMe = asyncHandler(async (req, res) => {
 
-    const {_id, name, email} = await User.findById(req.user._id)
+    const {_id, name, email} = await User.findById(req.params.id) // gets the user data from the database
 
-    res.status(200).json({
+    res.status(200).json({ // sends the user data back
         id: _id,
         name: name,
         email: email
     })
+
+    
+
+})
+
+// @desc get update user data
+// @route GET /api/user/:id
+// @access private 
+const updateUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id) // gets the user data from the database
+    
+    if(!user){  // if the user does not exist, throw an error at status 400
+        res.status(400)
+        throw new Error('user not found')
+    }
+
+    const salt = await bcrypt.genSalt(10) // you have to generate a salt to hash the password
+    
+    // Hash the password if it's included in the request body
+    if (req.body.password) {
+        req.body.password = await bcrypt.hash(req.body.password, salt) // this generates the password using the salt generated above. Takes the plain text pass and salt to gen the hash
+    }
+    
+    const updatedUser = await User.findByIdAndUpdate(user._id, req.body, { // updates the user data
+        new: true,
+        runValidators: true
+    })
+    
+    res.status(200).json({updatedUser}) // sends the updated user data back
+})
+
+// @desc get all user data
+// @route GET /api/user/
+// @access public 
+const getUsers = asyncHandler(async (req, res) => {
+    const users = await User.find({}).select('_id name email')  // gets the selected user data from the database
+     // note: -_id removes the id from the response
+    res.status(200).json({users})   // sends the user data back
+})
+
+// @desc get delete user data
+// @route GET /api/user/:id
+// @access private 
+const deleteUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id) // gets the user data from the database
+
+    if(!user){  // if the user does not exist, throw an error at status 400
+        res.status(400)
+        throw new Error('user not found')
+    }
+
+    const deletedUser = await User.findByIdAndDelete(req.params.id) // deletes the user data
+
+    res.status(200).json({deletedUser}).select('_id') // sends the deleted user id back
 
 })
 
@@ -92,8 +146,11 @@ const generateToken = (id) => {
     })
 }
 
-module.exports = {
+module.exports = {  // export the functions
     registerUser,
     loginUser,
-    getMe
+    getMe,
+    updateUser,
+    getUsers,
+    deleteUser,
 }   

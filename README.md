@@ -49,11 +49,11 @@ Before cloning the repository, it's essential to configure your Git settings to 
 
 ### User Management
 
-- POST /api/user: Create a new user
-- GET /api/user/{user_id}: Retrieve user profile information.
-- GET /api/user: Retrieve all user data
-- PUT /api/user/{user_id}: Edit user info
-- DELETE /api/user/{user_id}: Delete user
+- ~~POST /api/user: Create a new user~~ - **Complete**
+- ~~GET /api/user/{user_id}: Retrieve user profile information.~~ - **Complete**
+- ~~GET /api/user: Retrieve all user data~~ - **Complete**
+- ~~PUT /api/user/{user_id}: Edit user info~~ - **Complete**
+- ~~DELETE /api/user/{user_id}: Delete user~~ - **Complete**
 
 ### Availability Management:
 
@@ -71,5 +71,17 @@ Before cloning the repository, it's essential to configure your Git settings to 
 - DELETE /api/meeting/{meeting_id}: Delete a meeting.
 
 ### Search for Available Timeslots:
+
 - GET /api/timeslots: Retrieve available timeslots for scheduling a meeting with one or more users.
 
+## Extra Features:
+
+### User Registration and Authentication:
+
+- ~~POST /api/register: Register a new user.~~ - **Complete**
+- ~~POST /api/login: Authenticate a user.~~ - **Complete**
+
+### Invitations and Notifications:
+- POST /api/invite: Invite a user to a meeting.
+- GET /api/notifications: Retrieve notifications (e.g., meeting
+invitations, updates).
