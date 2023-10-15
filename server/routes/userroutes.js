@@ -26,4 +26,4 @@ router.delete('/:id',protect, deleteUser)   // this is the route for deleting a 
 
 
 
-module.exports = router // export the router
+module.exports = router; // export the router

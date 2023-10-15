@@ -1,29 +1,33 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-
+import React from "react";
+import Header from "./components/Header";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Welcome from "./components/Welcome";
 
 //functions
 import { getTest } from './functions/test';
+import { Route, Routes } from "react-router-dom";
+
 
 function App() {
-  const [data, setData] = useState("Hello World!");
-
-  useEffect(() => {
-    getTest()
-      .then((res) => {
-        setData(res.message);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  return (
-    <div className="App">
-      <h1>{data}</h1>
-      <img src="https://i.gifer.com/XOsX.gif" alt="duck" />
-    </div>
-  );
+  return(
+  <React.Fragment>
+    <header>
+        <Header/>
+    </header>
+    <main>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Signup />} />
+        <Route path="/user" element={<Welcome />} />
+      </Routes>
+    </main> 
+  </React.Fragment>
+  )
 };
 
+
 export default App;
+  

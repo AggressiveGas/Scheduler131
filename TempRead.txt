@@ -1,0 +1,26 @@
+-Side note from Ricky
+Will incorporate into the readme sometime.
+
+here is a gist of the changes summarized of what I changed/added:
+
+Add installed packages:
+
+cd client
+npm install @mui/material @emotion/react @emotion/styled
+npm install react-router-dom
+npm install axios
+
+
+
+
+
+Added Stuff:
+
+In src (added “components” folder)
+In components folder(added “Header.js” & “Login.js” & “Signup.js” & “Welcome.js”)
+In app.jsx [Client] (made some changes such as ui as well as client side routing)
+In index.js [Client/src] made some changes
+
+
+
+This is just a temporary file so will delete later.
