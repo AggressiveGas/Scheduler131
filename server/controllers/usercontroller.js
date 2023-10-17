@@ -117,7 +117,7 @@ const updateUser = asyncHandler(async (req, res) => {
 // @route GET /api/user/
 // @access public 
 const getUsers = asyncHandler(async (req, res) => {
-    const users = await User.find({}).select('_id name email')  // gets the selected user data from the database
+    const users = await User.find({})//.select('_id name email')  // gets the selected user data from the database
      // note: -_id removes the id from the response
     res.status(200).json({users})   // sends the user data back
 })

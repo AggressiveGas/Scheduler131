@@ -1,0 +1,62 @@
+Currently TODO:
+- [] setup the routes for the api calls for availability
+- [] check createschedule, updateschedule, getschedule and deleteschedule to make sure they work(im 90% sure they are super broken)
+- [] check that the array method is correct for the application we are using it for
+
+// extra stuff
+- [] put salt a generate token in its own file so u can call it and make code cleaner like how we do protected routes
+------------------------------------------------------------------
+QUESTIONS FOR PROFESSOR:
+
+- { For GET/API/USER it says to return all user data, do you mean literally show everything like password and email?
+      or just the public stuff like name, email and user_id (this is what we are currently doing)?}
+
+- { We have a register user route, do you want that to be different than the create user route?
+      or should we just use the create user route for both? if not what should the create user route do?}
+
+-{
+    For the availability Management section of the API Requirements it says to have an 
+        availability id at the end for put and delete, ask if we really do need that? }
+
+
+
+------------------------------------------------------------------
+
+API WORK:
+Requirements User Management: - COMPLETED
+- POST /api/user: Create a new user account. - COMPLETE KINDA (see question below)
+- GET /api/user/{user_id}: Retrieve user profile information. - COMPLETE
+- GET /api/user: Retrieve all user data - COMPLETE - Currently retrieves only "public" data (_id,name, email)
+
+right now these two below work, but they are secure routes, so you need to be logged in to access them
+I dont know if thats what the professor wants or not, but I think it makes sense to have them be secure
+I emailed him and asked him about it, but he hasnt responded yet  - by @AggressiveGas
+------------------------------------------------------------------
+- PUT /api/user/{user_id}: Edit user info - COMPLETED
+- DELETE /api/user/{user_id}: Delete user - COMPLETED
+------------------------------------------------------------------
+Variables:
+- (public) user_id: The user's unique ID
+- (public) email: The user's email address
+- (private) password: The user's password
+- (public) name: The user's name
+------------------------------------------------------------------
+
+EXTRA FEATURES: 
+- POST /api/user/login: Login to user account - COMPLETED
+    - inputs for login are email and password
+
+        "email": "example@csus.edu"
+        "password": "1234"
+    - if login is successful, returns
+        "_id": "1234"
+        "name": "example"
+        "email": "example@csus.edu"
+        "token": "xyz"
+
+- POST /api/user/register: Register a new user account - COMPLETED
+    - inputs for register are name, email, and password
+
+        "name": "example"
+        "email": "example@csus.edu"
+        "password": "1234"

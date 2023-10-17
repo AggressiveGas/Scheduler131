@@ -29,11 +29,9 @@ app.use('/api/user', require('./routes/userroutes'));  // this is the route for 
 
 
 // error handler
-
 app.use(errorHandler); // cleans up errors so they dont show up in big html file
 
 // port
-
 const port = process.env.PORT || 8080; // this is the port that the server will run on
 
 // listen
