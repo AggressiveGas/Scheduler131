@@ -2,6 +2,8 @@ Currently TODO:
 - [] setup the routes for the api calls for availability
 - [] check createschedule, updateschedule, getschedule and deleteschedule to make sure they work(im 90% sure they are super broken)
 - [] check that the array method is correct for the application we are using it for
+- [] user can have multiple availabilities for different meetings
+- [] add availability schema so it has its own collection, needs to have ID, the array, and the user_id its connected to
 
 // extra stuff
 - [] put salt a generate token in its own file so u can call it and make code cleaner like how we do protected routes
