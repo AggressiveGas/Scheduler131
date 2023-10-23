@@ -21,7 +21,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
-        <Route path="/user" element={<Welcome />} />
+        <Route path="/welcome" element={<Welcome />} />
       </Routes>
     </main> 
   </React.Fragment>
