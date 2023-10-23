@@ -34,7 +34,8 @@ Before cloning the repository, it's essential to configure your Git settings to 
 **Navigate to the Client Directory and Install Required Packages:**
 ```bash
   cd client
-  npm install react-scripts
+  npm install @mui/material @emotion/react @emotion/styled react-router-dom axios react-scripts
+
 ```
 
 **Navigate to the Server Directory and Install Required Packages:**
