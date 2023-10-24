@@ -1,17 +1,18 @@
-//imports
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 
 const Login = () => {
-    const navigate = useNavigate(); // Use useNavigate to get the navigation function
+    const navigate = useNavigate();
 
+    //Manages input
     const [inputs, setInputs] = useState({
         email: "",
         password: "",
     });
 
+    // Function to handle input changes
     const handleChange = (e) => {
         setInputs((prev) => ({
             ...prev,
@@ -19,6 +20,7 @@ const Login = () => {
         }));
     };
 
+    // Function to send a login request to the server using post
     const sendRequest = async () => {
         try {
             const res = await axios.post("http://localhost:8080/api/user/login", {
@@ -32,19 +34,26 @@ const Login = () => {
         }
     };
 
+    // Function to handle a login
+    const handleSuccessfulLogin = async (userId) => {
+        navigate(`/welcome/${userId}`);
+    };
+
+    // Function to handle the form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(inputs);
-        //send http request
+
         try {
             const data = await sendRequest();
-            // Navigate to '/welcome' after successful login (If you had an account)
-            navigate('/welcome');
+            //Passes the user's ID to the /welcome page when logging in
+            handleSuccessfulLogin(data._id);
         } catch (error) {
             console.error(error);
         }
     };
 
+    //Layout & formatting for the login form (Basically the text inputs and buttons)
     return (
         <div style={{ padding: '305px 20px', backgroundColor: '#E0E0E8' }}>
             <form onSubmit={handleSubmit}>
