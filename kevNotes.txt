@@ -1,14 +1,18 @@
-// id: 6539d1871c0d8e19169e1d78
-// token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1MzlkMTg3MWMwZDhlMTkxNjllMWQ3OCIsImlhdCI6MTY5ODI4ODAwNywiZXhwIjoxNzAwODgwMDA3fQ.2I7SEmhdYWFkPkBmgQ-TQOMnjxSvq2HYljrsxOQVYbk
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ TODO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- [ ] fix error hanlding for all availability routes (some of them are funky and dont quite work)
+- [ ] add constraints to the availability array so that it can only have 7 elements
+- [ ] add constraints so that you cant have two availabilities with the same day and time
+- [ ] add constraint so u cant have a time that doesnt stops before it starts
 
-Currently TODO:
-- [] setup the routes for the api calls for availability
-- [] check createschedule, updateschedule, getschedule and deleteschedule to make sure they work(im 90% sure they are super broken)
-- [] check that the array method is correct for the application we are using it for
-- [] user can have multiple availabilities for different meetings
-- [] add availability schema so it has its own collection, needs to have ID, the array, and the user_id its connected to
 
-// extra stuff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DONE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- [x] setup the routes for the api calls for availability
+- [x] check createschedule, updateschedule, getschedule and deleteschedule to make sure they work(im 90% sure they are super broken)
+- [x] check that the array method is correct for the application we are using it for
+- [x] user can have multiple availabilities for different meetings
+- [x] add availability schema so it has its own collection, needs to have ID, the array, and the user_id its connected to
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Extra Stuff ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - [] put salt a generate token in its own file so u can call it and make code cleaner like how we do protected routes
 ------------------------------------------------------------------
 QUESTIONS FOR PROFESSOR:

@@ -57,10 +57,10 @@ Before cloning the repository, it's essential to configure your Git settings to 
 
 ### Availability Management:
 
-- POST /api/user/{user_id}/availability: Create a new availability entry for a user.
-- GET /api/user/{user_id}/availability: Retrieve all availabilities for a user (useful for showing your own availability).
-- PUT /api/user/{user_id}/availability/{availability_id}: Update an existing availability entry.
-- DELETE /api/user/{user_id}/availability/{availability_id}: Delete an availability entry.
+- ~~POST /api/user/{user_id}/availability: Create a new availability entry for a user.~~ - **Complete**
+- ~~GET /api/user/{user_id}/availability: Retrieve all availabilities for a user (useful for showing your own availability).~~ - **Complete**
+- ~~PUT /api/user/{user_id}/availability/{availability_id}: Update an existing availability entry.~~ - **Complete**
+- ~~DELETE /api/user/{user_id}/availability/{availability_id}: Delete an availability entry.~~ - **Complete**
 
 ### Meeting Management:
 
