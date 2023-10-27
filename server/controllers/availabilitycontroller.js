@@ -1,34 +1,122 @@
 const asynchandler = require('express-async-handler')
 const Availability = require('../models/availabilitymodel');
 const User = require('../models/usermodel');
-const Goal = require('../models/goalmodel');
 
+
+
+// Wrap the function within asyncHandler
 const getAvailability = asynchandler(async (req, res) => {
-    const goals = await Goal.find({user: req.user._id})
-    
-    res.status(200).json({goals})
-})
+    const userId = req.params.id;
+
+    // Fetch the availability data from the database based on userId
+    const availability = await Availability.find({ user: userId });
+
+    // Check if availability data exists
+    if (!availability) {
+        res.status(404);
+        throw new Error('Availability not found');
+    }
+
+    // Send the availability data as a response
+    res.status(200).json(availability);
+});
+
+
 
 const createAvailability = asynchandler(async (req, res) => {
     
-    const {label, WeeklyAvailability} = req.body
-    const {user} = req.user._id
+    const { label, weeklyAvailability } = req.body; // label and weeklyAvailability
+    const user = req.params.id; // user id
 
-    if(!label || !WeeklyAvailability){
-        res.status(400)
-        throw new Error('text is required')
-    }
-    
+    const trimmedLabel = label.trim();  // Trim the label
+    const capitalizedLabel = trimmedLabel.charAt(0).toUpperCase() + trimmedLabel.slice(1);  // Capitalize the first letter of the label
+
+    // Check if each 'intervals' in 'weeklyAvailability' is an array
+    weeklyAvailability.forEach(availability => {
+        if (!Array.isArray(availability.intervals)) {
+            res.status(400);
+            throw new Error('Intervals must be an array');
+        }
+    });
+
+    // Creating availability
     const availability = await Availability.create({
-        userId: user,
-        label: label,
-        weeklyAvailability: WeeklyAvailability
-    })
+        label: capitalizedLabel,
+        weeklyAvailability: weeklyAvailability,
+        user: user
+    });
 
-    console.log(req.body)
-    res.status(200).json({availability})
-})
+    console.log(req.body);
+    res.status(200).json({ availability });
+});
+
+const updateAvailability = asynchandler(async (req, res) => {
+
+    const user_id = req.params.userid;
+    const availability_id = req.params.availabilityId;
+
+    
+    const user = await User.findById(user_id);  // Find the user
+    if (!user) {    // Check if user exists
+        res.status(401);
+        //throw new Error('User not found');  // Throw an error if user does not exist
+        console.log(user_id)
+    }
+
+    const availability = await Availability.findById(availability_id);  // Find the availability
+    if(!availability){    // Check if availabilityId exists
+        res.status(400);
+        //throw new Error('Availability not found');  // Throw an error if availabilityId does not exist
+        console.log(req.params.availabilityid)
+    }
+
+    const { label, weeklyAvailability } = req.body;
+
+    const trimmedLabel = label.trim();  // Trim the label
+    const capitalizedLabel = trimmedLabel.charAt(0).toUpperCase() + trimmedLabel.slice(1);  // Capitalize the first letter of the label
+
+    // Check if each 'intervals' in 'weeklyAvailability' is an array
+    weeklyAvailability.forEach(availability => {
+        if (!Array.isArray(availability.intervals)) {
+            res.status(400);
+            throw new Error('Intervals must be an array');
+        }
+    });
+
+    // Creating availability
+    const updatedAvailability = await Availability.findByIdAndUpdate(availability_id, {
+        label: capitalizedLabel,
+        weeklyAvailability: weeklyAvailability,
+        user: user
+    });
+    
+    
+
+    res.status(200).json({ updatedAvailability });
+
+});
+
+const deleteAvailability = asynchandler(async (req, res) => {
+    const availability = await Availability.findById(req.params.availabilityId);
+    if (!availability) {
+        res.status(400);
+        throw new Error('Availability not found');
+    }
+
+    const user = await User.findById(req.params.userid);
+    if (!user) {
+        res.status(401);
+        throw new Error('User not found');
+    }
+
+    if (availability.user.toString() !== user._id.toString()) {
+        res.status(401);
+        throw new Error('Not authorized');
+    }
+
+    await Availability.findByIdAndDelete(req.params.availabilityid);
+    res.status(200).json({ message: 'Availability deleted successfully' });
+});
 
 
-module.exports = {getAvailability, createAvailability};
-
+module.exports = {getAvailability, createAvailability, updateAvailability, deleteAvailability};
