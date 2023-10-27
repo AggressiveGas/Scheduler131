@@ -59,15 +59,13 @@ const updateAvailability = asynchandler(async (req, res) => {
     const user = await User.findById(user_id);  // Find the user
     if (!user) {    // Check if user exists
         res.status(401);
-        //throw new Error('User not found');  // Throw an error if user does not exist
-        console.log(user_id)
+        throw new Error('User not found');  // Throw an error if user does not exist
     }
 
     const availability = await Availability.findById(availability_id);  // Find the availability
     if(!availability){    // Check if availabilityId exists
         res.status(400);
-        //throw new Error('Availability not found');  // Throw an error if availabilityId does not exist
-        console.log(req.params.availabilityid)
+        throw new Error('Availability not found');  // Throw an error if availabilityId does not exist
     }
 
     const { label, weeklyAvailability } = req.body;
@@ -97,25 +95,28 @@ const updateAvailability = asynchandler(async (req, res) => {
 });
 
 const deleteAvailability = asynchandler(async (req, res) => {
-    const availability = await Availability.findById(req.params.availabilityId);
-    if (!availability) {
+
+    const availability = await Availability.findById(req.params.availabilityId);  // Find the availability
+    if(!availability){    // Check if availabilityId exists
         res.status(400);
-        throw new Error('Availability not found');
+        throw new Error('Availability not found');  // Throw an error if availabilityId does not exist
     }
-
-    const user = await User.findById(req.params.userid);
-    if (!user) {
+    
+    const user = await User.findById(req.params.userid);  // Find the user
+    if (!user) {    // Check if user exists
         res.status(401);
-        throw new Error('User not found');
+        throw new Error('User not found');  // Throw an error if user does not exist
     }
 
-    if (availability.user.toString() !== user._id.toString()) {
+    if (availability.user.toString() !== user._id.toString()) {  // Check if the availability belongs to the user
         res.status(401);
-        throw new Error('Not authorized');
+        throw new Error('Not authorized');  // Throw an error if the availability does not belong to the user
     }
 
-    await Availability.findByIdAndDelete(req.params.availabilityid);
-    res.status(200).json({ message: 'Availability deleted successfully' });
+    const deletedavailability = await Availability.findByIdAndDelete(req.params.availabilityId);  // Delete the availability
+
+    res.status(200).json({deletedavailability});
+
 });
 
 
