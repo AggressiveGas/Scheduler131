@@ -26,6 +26,7 @@ app.use(express.urlencoded({extended: true})); //req.body its to allow text to b
 // routes
 app.use('/api/goals', require('./routes/goalroutes'));  // this is the route for the goals
 app.use('/api/user', require('./routes/userroutes'));  // this is the route for the users
+app.use('/api/rooms', require('./routes/roomroutes'));  // this is the route for the rooms
 
 app.use('/api/user', require('./routes/availabilityroutes'));
 
