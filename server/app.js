@@ -27,13 +27,13 @@ app.use(express.urlencoded({extended: true})); //req.body its to allow text to b
 app.use('/api/goals', require('./routes/goalroutes'));  // this is the route for the goals
 app.use('/api/user', require('./routes/userroutes'));  // this is the route for the users
 
+app.use('/api/user', require('./routes/availabilityroutes'));
+
 
 // error handler
-
 app.use(errorHandler); // cleans up errors so they dont show up in big html file
 
 // port
-
 const port = process.env.PORT || 8080; // this is the port that the server will run on
 
 // listen

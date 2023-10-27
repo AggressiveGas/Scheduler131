@@ -4,7 +4,7 @@ const {getGoals, setGoals,updateGoal,deleteGoal} = require('../controllers/goals
 const {protect} = require('../middlewares/authmiddleware')
 
 
-router.get('/', protect, getGoals)
+router.get('/', getGoals)
 
 router.post('/', protect, setGoals)
 
