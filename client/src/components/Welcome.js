@@ -17,6 +17,33 @@ const Welcome = () => {
         }
     };
 
+    const addavailability = async () => {
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably wont work due to protected and need tokens
+            console.log("Availability has been added");
+        } catch (error) {
+            console.error("Error: Unable to create availability", error);
+        }
+    };
+
+    const editavailability = async () => {
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably wont work due to protected and need tokens
+            console.log("Availability has been edited");
+        } catch (error) {
+            console.error("Error: Unable to edit availability", error);
+        }
+    };
+
+    const deleteavailability = async () => {
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably wont work due to protected and need tokens
+            console.log("Availability has been deleted");
+        } catch (error) {
+            console.error("Error: Unable to delete availability", error);
+        }
+    };
+
     //bellow are the Homepage Button and Delete Button
     return (
         <div style={{ padding: '100px 20px', backgroundColor: 'green' }}>
@@ -35,12 +62,45 @@ const Welcome = () => {
                 variant="outlined"
                 color="secondary"
                 onClick={handleDeleteUser}
-                sx={{ marginTop: '20px', backgroundColor: 'red', color: 'white' }} 
+                sx={{ marginTop: '20px', marginRight:'60px', backgroundColor: 'red', color: 'white' }} 
             >
                 Delete User
             </Button>
+            <div>AVAILABILITY OPTIONS</div>
+            <Button
+                variant="outlined"
+                color= "primary"
+                onClick={addavailability}
+                sx={{ backgroundColor: 'blue', color: 'white'}}
+
+
+            >
+                Add Availability
+            </Button>
+
+            
+            <Button
+                variant="outlined"
+                color= "primary"
+                onClick={editavailability}
+                sx={{ backgroundColor: 'purple', color: 'white'}}
+
+
+            >
+                Edit Availability
+            </Button>
+            <Button
+                variant="outlined"
+                color= "primary"
+                onClick={deleteavailability}
+                sx={{ backgroundColor: 'cyan', color: 'white'}}
+            >
+                Delete Availability
+            </Button>
         </div>
+        
     );
+    
 };
 
 export default Welcome;
