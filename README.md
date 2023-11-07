@@ -42,7 +42,7 @@ Before cloning the repository, it's essential to configure your Git settings to 
 ```bash
   cd ..
   cd server
-  npm install cookie-parser express mongoose cors morgan dotenv nodemon mongodb express-async-handler bcryptjs jsonwebtoken
+  npm install express mongoose cors morgan dotenv nodemon mongodb express-async-handler bcryptjs jsonwebtoken
 
 ```
 

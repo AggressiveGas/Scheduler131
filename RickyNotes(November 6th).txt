@@ -1,17 +1,10 @@
 -Side note from Ricky
 
 
-One new package to install, here is the command:
-npm install cookie-parser
+[Final change after realizing error]
+Don't need cookie-parser package, don't need it. Express handles it for me already. Also, Tokens are good enough I think.
 
-
-
-
---Added cookie parser and storing token on client.
---Basically I think its a working authentication.
---Delete user function now deletes user using token for authentication.
-
-
+-added authentication + delete user function (working)
 
 ~Let me know if I messed anything up LOL, or if i'm doing the authentication incorrectly. I still struggle with the idea of it.
 
