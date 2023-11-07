@@ -1,0 +1,17 @@
+-Side note from Ricky
+
+
+One new package to install, here is the command:
+npm install cookie-parser
+
+
+
+
+--Added cookie parser and storing token on client.
+--Basically I think its a working authentication.
+--Delete user function now deletes user using token for authentication.
+
+
+
+~Let me know if I messed anything up LOL, or if i'm doing the authentication incorrectly. I still struggle with the idea of it.
+

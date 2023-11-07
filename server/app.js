@@ -6,9 +6,16 @@ const morgan = require('morgan');
 require('dotenv').config();
 const {errorHandler} = require('./middlewares/errormiddleware');
 const connectDB = require('./config/db');
+const cookieParser = require('cookie-parser');
+
+
 // app
 const app = express();
 connectDB();
+
+
+//cookie parser
+app.use(cookieParser());
 
 // db
 mongoose.connect(process.env.MONGO_URI, {

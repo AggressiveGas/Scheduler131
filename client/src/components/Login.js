@@ -6,7 +6,7 @@ import axios from 'axios';
 const Login = () => {
     const navigate = useNavigate();
 
-    //Manages input
+    // Manages input
     const [inputs, setInputs] = useState({
         email: "",
         password: "",
@@ -28,6 +28,8 @@ const Login = () => {
                 password: inputs.password,
             });
             const data = res.data;
+            localStorage.setItem('authToken', data.token);  // Store the token in localStorage
+
             return data;
         } catch (error) {
             throw new Error(error);
@@ -35,7 +37,8 @@ const Login = () => {
     };
 
     // Function to handle a login
-    const handleSuccessfulLogin = async (userId) => {
+    const handleSuccessfulLogin = async (userId, token) => {
+        localStorage.setItem('authToken', token); // Saves the authentication token to local storage
         navigate(`/welcome/${userId}`);
     };
 
@@ -46,14 +49,14 @@ const Login = () => {
 
         try {
             const data = await sendRequest();
-            //Passes the user's ID to the /welcome page when logging in
-            handleSuccessfulLogin(data._id);
+            // Passes the user's ID and token to the /welcome page when logging in
+            handleSuccessfulLogin(data._id, data.token);
         } catch (error) {
             console.error(error);
         }
     };
 
-    //Layout & formatting for the login form (Basically the text inputs and buttons)
+    // Layout & formatting for the login form (Basically the text inputs and buttons)
     return (
         <div style={{ padding: '305px 20px', backgroundColor: '#E0E0E8' }}>
             <form onSubmit={handleSubmit}>
