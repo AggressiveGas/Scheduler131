@@ -61,6 +61,15 @@ const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({email})
 
     if(user && (await bcrypt.compare(password, user.password))){    // if the user exists and the password matches, send the user data back
+        
+        const token = generateToken(user._id);
+
+        res.cookie('token', token, {
+            httpOnly: true, // Makes the token accessible only via HTTP
+            secure: process.env.NODE_ENV === 'production', // Set this to true in production to secure the cookie
+            maxAge: 30 , // Token expires in 30 days (adjust as needed)
+        });
+        
         res.json({
             _id: user._id,
             name: user.name,

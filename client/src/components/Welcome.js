@@ -4,13 +4,20 @@ import { Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-//functionality for DeleteUser Button (doesn't include token thing as of now)
 const Welcome = () => {
     const { userId } = useParams();
 
+    // Function to handle user deletion
     const handleDeleteUser = async () => {
+        const userTokenHere = localStorage.getItem('authToken'); //gets token from localStorage
+
         try {
-            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably wont work due to protected and need tokens
+            const response = await axios.delete(`http://localhost:8080/api/user/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${userTokenHere}`
+                }
+            });
+            
             console.log("User has been deleted");
         } catch (error) {
             console.error("Error deleting user: ", error);
@@ -19,7 +26,7 @@ const Welcome = () => {
 
     const addavailability = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably wont work due to protected and need tokens
+            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably won't work due to protected and need tokens
             console.log("Availability has been added");
         } catch (error) {
             console.error("Error: Unable to create availability", error);
@@ -28,7 +35,7 @@ const Welcome = () => {
 
     const editavailability = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably wont work due to protected and need tokens
+            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably won't work due to protected and need tokens
             console.log("Availability has been edited");
         } catch (error) {
             console.error("Error: Unable to edit availability", error);
@@ -37,14 +44,13 @@ const Welcome = () => {
 
     const deleteavailability = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably wont work due to protected and need tokens
+            const response = await axios.delete(`http://localhost:8080/api/user/(userId)`); //put in userID within () --get ID from MongoDB, probably won't work due to protected and need tokens
             console.log("Availability has been deleted");
         } catch (error) {
             console.error("Error: Unable to delete availability", error);
         }
     };
 
-    //bellow are the Homepage Button and Delete Button
     return (
         <div style={{ padding: '100px 20px', backgroundColor: 'green' }}>
             <div>WELCOME USER</div>
@@ -72,20 +78,15 @@ const Welcome = () => {
                 color= "primary"
                 onClick={addavailability}
                 sx={{ backgroundColor: 'blue', color: 'white'}}
-
-
             >
                 Add Availability
             </Button>
-
             
             <Button
                 variant="outlined"
                 color= "primary"
                 onClick={editavailability}
                 sx={{ backgroundColor: 'purple', color: 'white'}}
-
-
             >
                 Edit Availability
             </Button>
@@ -98,9 +99,7 @@ const Welcome = () => {
                 Delete Availability
             </Button>
         </div>
-        
     );
-    
 };
 
 export default Welcome;
