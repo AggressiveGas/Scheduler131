@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const {registerUser,loginUser,getMe,updateUser, getUsers,deleteUser} = require('../controllers/usercontroller') // import the functions from the controller
+const {registerUser,loginUser,getMe,updateUser, getUsers,deleteUser, getUserRooms, } = require('../controllers/usercontroller') // import the functions from the controller
 const {protect} = require('../middlewares/authmiddleware')  // import the middleware
 
 
@@ -14,6 +14,7 @@ router.post('/register', registerUser)  // this is the route for registering a u
 // read routes
 router.get('/:id',getMe)    // this is the route for getting a user
 router.get('/',getUsers)    // this is the route for getting all users
+router.get('/:id/rooms', getUserRooms)  //this is the route for getting a user's rooms
 
 // update routes
 router.put('/:id',protect,updateUser)   // this is the route for updating a user
