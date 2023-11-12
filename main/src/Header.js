@@ -1,3 +1,9 @@
+/*
+Updated: 11/12/23 by Ajay
+Work in progress: The user dropdown (where log-in link will be embedded), register page connection with backend, dark mode toggle, footer section should be equally setup on all the pages
+*/
+
+
 import React from 'react';
 import logo from './util/images/logo.PNG';
 import Login from './util/Login.js';
@@ -13,7 +19,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
-import { Link, useMatch, useResolvedPath} from "react-router-dom";
+import { Link} from "react-router-dom";
 
 const About = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -32,10 +38,95 @@ function classNames(...classes) {
 }
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   {/*const resolvedPath = useResolvedPath(to)
-const isActive  = useMatch({path:resolvedPath.pathname, end: true })*/}
+  const isActive  = useMatch({path:resolvedPath.pathname, end: true })*/}
+
+  {/*Dark mode toggle */}
+  const HSThemeAppearance = {
+    init() {
+        const defaultTheme = 'default'
+        let theme = localStorage.getItem('hs_theme') || defaultTheme
+
+        if (document.querySelector('html').classList.contains('dark')) return
+        this.setAppearance(theme)
+    },
+    _resetStylesOnLoad() {
+        const $resetStyles = document.createElement('style')
+        $resetStyles.innerText = `*{transition: unset !important;}`
+        $resetStyles.setAttribute('data-hs-appearance-onload-styles', '')
+        document.head.appendChild($resetStyles)
+        return $resetStyles
+    },
+    setAppearance(theme, saveInStore = true, dispatchEvent = true) {
+        const $resetStylesEl = this._resetStylesOnLoad()
+
+        if (saveInStore) {
+            localStorage.setItem('hs_theme', theme)
+        }
+
+        if (theme === 'auto') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'
+        }
+
+        document.querySelector('html').classList.remove('dark')
+        document.querySelector('html').classList.remove('default')
+        document.querySelector('html').classList.remove('auto')
+
+        document.querySelector('html').classList.add(this.getOriginalAppearance())
+
+        setTimeout(() => {
+            $resetStylesEl.remove()
+        })
+
+        if (dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('on-hs-appearance-change', {detail: theme}))
+        }
+    },
+    getAppearance() {
+        let theme = this.getOriginalAppearance()
+        if (theme === 'auto') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'
+        }
+        return theme
+    },
+    getOriginalAppearance() {
+        const defaultTheme = 'default'
+        return localStorage.getItem('hs_theme') || defaultTheme
+    }
+  }
+  HSThemeAppearance.init()
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (HSThemeAppearance.getOriginalAppearance() === 'auto') {
+        HSThemeAppearance.setAppearance('auto', false)
+    }
+  })
+
+  window.addEventListener('load', () => {
+    const $clickableThemes = document.querySelectorAll('[data-hs-theme-click-value]')
+    const $switchableThemes = document.querySelectorAll('[data-hs-theme-switch]')
+
+    $clickableThemes.forEach($item => {
+        $item.addEventListener('click', () => HSThemeAppearance.setAppearance($item.getAttribute('data-hs-theme-click-value'), true, $item))
+    })
+
+    $switchableThemes.forEach($item => {
+        $item.addEventListener('change', (e) => {
+            HSThemeAppearance.setAppearance(e.target.checked ? 'dark' : 'default')
+        })
+
+        $item.checked = HSThemeAppearance.getAppearance() === 'dark'
+    })
+
+    window.addEventListener('on-hs-appearance-change', e => {
+        $switchableThemes.forEach($item => {
+            $item.checked = e.detail === 'dark'
+        })
+    })
+  })
+
 
   return (
     <header className="bg-white">
@@ -116,7 +207,38 @@ const isActive  = useMatch({path:resolvedPath.pathname, end: true })*/}
             Schedule
           </a>
         </Popover.Group>
+        
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <button type="button" class="hs-dark-mode-active:hidden block hs-dark-mode group flex items-center text-gray-600 hover:text-blue-600 font-medium dark:text-gray-400 dark:hover:text-gray-500" data-hs-theme-click-value="dark">
+            <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          </button>
+          <button type="button" class="hs-dark-mode-active:block hidden hs-dark-mode group flex items-center text-gray-600 hover:text-blue-600 font-medium dark:text-gray-400 dark:hover:text-gray-500" data-hs-theme-click-value="light">
+            <svg class="flex-shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 8a2 2 0 1 0 4 4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          </button>
+          
+          {/*Divides out the navbar*/}
+          <div class = "border-l border-slate-200 ml-6 pl-6 dark:border-slate-800"></div>
+         
+          {/*User settings*/}
+          <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider" class="text-white bg-red-600 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">User settings <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+          </svg>
+          </button>
+          {/*Dropdown menu*/}
+          <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownButton">
+                <li>
+                  <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                </li>
+                <li>
+                  <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+                </li>
+              </ul>
+              <div class="py-2">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log in</a>
+              </div>
+          </div>
+
           <Link to="/login" label = "Login" className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
             Log in <span aria-hidden="true">&rarr;</span>
           </Link>
@@ -201,6 +323,51 @@ const isActive  = useMatch({path:resolvedPath.pathname, end: true })*/}
           </div>
         </Dialog.Panel>
       </Dialog>
+
+
+      {/*Banner Section*/}
+        
+        <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
+          <div className="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+            <div className="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
+              style={{
+                clipPath:
+                  'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
+              }}
+            />
+          </div>
+
+          <div className="absolute left-[max(45rem,calc(50%+8rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+            <div
+              className="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
+              style={{
+                clipPath:
+                  'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
+              }}
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p className="text-sm leading-6 text-gray-900">
+              Stay up to date with your meetings by registering now.
+            </p>
+            <Link to="/register" className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
+              Register now <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+
+          <div className="flex flex-1 justify-end">
+          {/* button tag for dismissing the registeration banner
+            <button type="button" className="-m-3 p-3 focus-visible:outline-offset-[-4px]" onClick = {handleCloseDialog}>
+              <span className="sr-only">Dismiss</span>
+              <XMarkIcon className="h-5 w-5 text-gray-900" aria-hidden="true" />
+            </button> 
+          */}      
+          </div>
+          
+        </div>  
+      
     </header>
+    
   )
 }
