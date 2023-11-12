@@ -6,7 +6,7 @@ const User = require('../models/usermodel');
 
 // Wrap the function within asyncHandler
 const getAvailability = asynchandler(async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.user._id;
 
     // Fetch the availability data from the database based on userId
     const availability = await Availability.find({ user: userId });
@@ -26,7 +26,7 @@ const getAvailability = asynchandler(async (req, res) => {
 const createAvailability = asynchandler(async (req, res) => {
     
     const { label, weeklyAvailability } = req.body; // label and weeklyAvailability
-    const user = req.params.id; // user id
+    const user = req.user._id; // user id
 
     const trimmedLabel = label.trim();  // Trim the label
     const capitalizedLabel = trimmedLabel.charAt(0).toUpperCase() + trimmedLabel.slice(1);  // Capitalize the first letter of the label
@@ -52,7 +52,7 @@ const createAvailability = asynchandler(async (req, res) => {
 
 const updateAvailability = asynchandler(async (req, res) => {
 
-    const user_id = req.params.userid;
+    const user_id = req.user._id;
     const availability_id = req.params.availabilityId;
 
     
@@ -102,7 +102,7 @@ const deleteAvailability = asynchandler(async (req, res) => {
         throw new Error('Availability not found');  // Throw an error if availabilityId does not exist
     }
     
-    const user = await User.findById(req.params.userid);  // Find the user
+    const user = await User.findById(req.user._id);  // Find the user
     if (!user) {    // Check if user exists
         res.status(401);
         throw new Error('User not found');  // Throw an error if user does not exist
