@@ -24,15 +24,15 @@ export default function Register() {
 
 	const sendRequest = async () => {
 		try {
-		const res = await axios.post("http://localhost:8080/api/user/register", {
-			name: inputs.name,
-			email: inputs.email,
-			password: inputs.password,
-		});
-		const data = res.data;
-		return data;
+			const res = await axios.post("http://localhost:8080/api/user/register", {
+				name: inputs.name,
+				email: inputs.email,
+				password: inputs.password,
+			});
+			const data = res.data;
+			return data;
 		} catch (error) {
-		throw new Error(error);
+			throw new Error(error);
 		}
 	};
 
@@ -41,11 +41,11 @@ export default function Register() {
 		console.log(inputs);
 		//send http request
 		try {
-		const data = await sendRequest();
-		// Navigate to '/login' after successful registration
-		navigate('/login');
+			const data = await sendRequest();
+			// Navigate to '/login' after successful registration
+			navigate('/login');
 		} catch (error) {
-		console.error(error);
+			console.error(error);
 		}
 	};
 
@@ -87,10 +87,10 @@ export default function Register() {
 						</div>
 						<div className="mt-2">
 							<input
-								id="username"
-								name="username"
-								type="username"
-								autoComplete="username"
+								id="name"
+								name="name"
+								type="name"
+								autoComplete="name"
 								required
 								className="block w-full rounded-md border-0 px-2.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 								onChange={handleChange}
@@ -122,7 +122,7 @@ export default function Register() {
 						type="submit"
 						className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 						>
-						Register
+						Register 
 						</button>
 					</div>
 				</form>
