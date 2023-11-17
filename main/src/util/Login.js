@@ -3,20 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link, useMatch, useResolvedPath} from "react-router-dom";
 
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 
 export default function Login() {
 	const navigate = useNavigate();
@@ -51,7 +37,7 @@ export default function Login() {
 
 	// Function to handle a login
 	const handleSuccessfulLogin = async (userId) => {
-		navigate(`/welcome/${userId}`);
+		navigate(`/WelcomeUser/${userId}`);
 	};
 
 	// Function to handle the form submission
