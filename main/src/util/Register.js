@@ -42,7 +42,7 @@ export default function Register() {
 		//send http request
 		try {
 			const data = await sendRequest();
-			// Navigate to '/login' after successful registration
+			// Navigate to login page after successful registration
 			navigate('/login');
 		} catch (error) {
 			console.error(error);
@@ -129,7 +129,7 @@ export default function Register() {
 
 				<p className="mt-10 text-center text-sm text-gray-500">
 					Already have an account?{' '}
-					<Link to="/login" className="font-semibold leading-6 text-red-600 hover:text-indigo-500">
+					<Link to="" className="font-semibold leading-6 text-red-600 hover:text-indigo-500">
 						Log in here
 					</Link>
 				</p>
