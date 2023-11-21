@@ -1,7 +1,7 @@
 const asynchandler = require('express-async-handler')
 const Availability = require('../models/availabilitymodel');
 const User = require('../models/usermodel');
-
+const Room = require('../models/roommodel')
 
 
 // Wrap the function within asyncHandler
@@ -46,7 +46,7 @@ const createAvailability = asynchandler(async (req, res) => {
         user: user
     });
 
-    console.log(req.body);
+   // console.log(req.body) // for testing purposes
     res.status(200).json({ availability });
 });
 
@@ -118,6 +118,8 @@ const deleteAvailability = asynchandler(async (req, res) => {
     res.status(200).json({deletedavailability});
 
 });
+
+
 
 
 module.exports = {getAvailability, createAvailability, updateAvailability, deleteAvailability};
