@@ -234,9 +234,7 @@ export default function Header() {
               </div>
           </div>
 
-          <Link to="/login" label = "Login" className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
-            Log in <span aria-hidden="true">&rarr;</span>
-          </Link>
+          
         </div>
       </nav>
 
@@ -305,14 +303,6 @@ export default function Header() {
                 >
                   Schedule
                 </a>
-              </div>
-              <div className="py-6">
-                <Link
-                  to="/login"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </Link>
               </div>
             </div>
           </div>

@@ -1,102 +1,141 @@
-import dayjs from "dayjs";
-import React, { useState } from "react";
-import { generateDate, months } from "./Calendar";
-import cn from "./cn";
-import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Link, useMatch, useResolvedPath} from "react-router-dom";
 
 
 export default function Home() {
-	const days = ["S", "M", "T", "W", "T", "F", "S"];
-	const currentDate = dayjs();
-	const [today, setToday] = useState(currentDate);
-	const [selectDate, setSelectDate] = useState(currentDate);
+	const navigate = useNavigate();
+
+	//Manages input
+	const [inputs, setInputs] = useState({
+		email: "",
+		password: "",
+	});
+
+	// Function to handle input changes
+	const handleChange = (e) => {
+		setInputs((prev) => ({
+			...prev,
+			[e.target.name]: e.target.value,
+		}));
+	};
+
+	// Function to send a login request to the server using post
+	const sendRequest = async () => {
+		try {
+			const res = await axios.post("http://localhost:8080/api/user/login", {
+				email: inputs.email,
+				password: inputs.password,
+			});
+			const data = res.data;
+			return data;
+		} catch (error) {
+			throw new Error(error);
+		}
+	};
+
+	// Function to handle a login
+	const handleSuccessfulLogin = async (userId) => {
+		navigate(`/WelcomeUser/${userId}`);
+	};
+
+	// Function to handle the form submission
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		console.log(inputs);
+
+		try {
+			const data = await sendRequest();
+			//Passes the user's ID to the /welcome page when logging in
+			handleSuccessfulLogin(data._id);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 	
 	{/*<div className = "App"> </div> --removed this*/ }
 
 	return (
-    
-	<div className="flex gap-10 sm:divide-x justify-center px-6 py-12 sm:w-1/2 mx-auto items-center sm:flex-row flex-col">
-		<div className="w-96 h-96 ">
-			<div className="flex justify-between items-center">
-				<h1 className="select-none font-semibold">
-					{months[today.month()]}, {today.year()}
-				</h1>
-				<div className="flex gap-10 items-center ">
-					<GrFormPrevious
-					className="w-5 h-5 cursor-pointer hover:scale-105 transition-all"
-					onClick={() => {
-						setToday(today.month(today.month() - 1));
-					}}
-					/>
-					<h1
-					className=" cursor-pointer hover:scale-105 transition-all"
-					onClick={() => {
-						setToday(currentDate);
-					}}
-					>
-					Today
-					</h1>
-					<GrFormNext
-					className="w-5 h-5 cursor-pointer hover:scale-105 transition-all"
-					onClick={() => {
-						setToday(today.month(today.month() + 1));
-					}}
-					/>
-				</div>
+		<>
+		{/*<img className="mx-auto h-10 w-auto" src= {logo} alt="Your Company"/>   ---for displaying the logo on the login page */}
+	
+		<div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+			<div className="sm:mx-auto sm:w-full sm:max-w-sm">
+				<h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+				Log in to Scheduler131
+				</h2>
 			</div>
-			<div className="grid grid-cols-7 ">
-			{days.map((day, index) => {
-				return (
-				<h1
-					key={index}
-					className="text-sm text-center h-14 w-14 grid place-content-center text-gray-500 select-none"
-				>
-					{day}
-				</h1>
-				);
-			})}
-			</div>
-
-			<div className=" grid grid-cols-7 ">
-			{generateDate(today.month(), today.year()).map(
-				({ date, currentMonth, today }, index) => {
-				return (
-					<div
-					key={index}
-					className="p-2 text-center h-14 grid place-content-center text-sm border-t"
-					>
-					<h1
-						className={cn(
-						currentMonth ? "" : "text-gray-400",
-						today
-							? "bg-red-600 text-white"
-							: "",
-						selectDate
-							.toDate()
-							.toDateString() ===
-							date.toDate().toDateString()
-							? "bg-black text-white"
-							: "",
-						"h-10 w-10 rounded-full grid place-content-center hover:bg-black hover:text-white transition-all cursor-pointer select-none"
-						)}
-						onClick={() => {
-						setSelectDate(date);
-						}}
-					>
-						{date.date()}
-					</h1>
+	
+			<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+				<form className="space-y-6" onSubmit={handleSubmit} action="#" method="POST">
+					<div>
+						<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+						Email address
+						</label>
+						<div className="mt-2">
+						<input
+							id="email"
+							name="email"
+							type="email"
+							autoComplete="email"
+							required
+							className="block w-full rounded-md border-0 px-2.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							onChange={handleChange}
+						/>
+						</div>
 					</div>
-				);
-				}
-			)}
+	
+					<div>
+						<div className="flex items-center justify-between">
+						<label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+							Password
+						</label>
+						<div className="text-sm">
+							<a href="#" className="font-semibold text-red-600 hover:text-indigo-500">
+							Forgot password?
+							</a>
+						</div>
+						</div>
+						<div className="mt-2">
+						<input
+							id="password"
+							name="password"
+							type="password"
+							autoComplete="current-password"
+							required
+							className="block w-full rounded-md border-0 px-2.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							onChange={handleChange}
+						/>
+						</div>
+					</div>
+					
+					<div>
+						<button
+						type="submit"
+						className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						>
+						Log in
+						</button>
+					</div>
+					
+				</form>
+	
+				<p className="mt-10 text-center text-sm text-gray-500">
+					Don't have an account?{' '}
+					<Link to="/register" className="font-semibold leading-6 text-red-600 hover:text-indigo-500">
+						Register here
+					</Link>
+				</p>
 			</div>
 		</div>
-		<div className="h-96 w-96 sm:px-5">
-			<h1 className=" font-semibold">
-			Schedule for {selectDate.toDate().toDateString()}
-			</h1>
-			<p className="text-gray-400">No meetings for today.</p>
-		</div>
-	</div>
-	);
-}
+		<footer>
+			<div class="w-full mx-auto p-4 md:py-auto">
+			<hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+			<span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 Scheduler131™. All Rights Reserved.</span>
+			</div>
+		</footer>
+		</>
+	  )
+	}
+	
