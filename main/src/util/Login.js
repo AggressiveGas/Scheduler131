@@ -7,54 +7,55 @@ import { Link, useMatch, useResolvedPath} from "react-router-dom";
 export default function Login() {
 	const navigate = useNavigate();
 
-	//Manages input
-	const [inputs, setInputs] = useState({
-		email: "",
-		password: "",
-	});
+    // Manages input
+    const [inputs, setInputs] = useState({
+        email: "",
+        password: "",
+    });
 
-	// Function to handle input changes
-	const handleChange = (e) => {
-		setInputs((prev) => ({
-			...prev,
-			[e.target.name]: e.target.value,
-		}));
-	};
+    // Function to handle input changes
+    const handleChange = (e) => {
+        setInputs((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+        }));
+    };
 
-	// Function to send a login request to the server using post
-	const sendRequest = async () => {
-		try {
-			const res = await axios.post("http://localhost:8080/api/user/login", {
-				email: inputs.email,
-				password: inputs.password,
-			});
-			const data = res.data;
-			return data;
-		} catch (error) {
-			throw new Error(error);
-		}
-	};
+    // Function to send a login request to the server using post
+    const sendRequest = async () => {
+        try {
+            const res = await axios.post("http://localhost:8080/api/user/login", {
+                email: inputs.email,
+                password: inputs.password,
+            });
+            const data = res.data;
+            localStorage.setItem('authToken', data.token);  // Store the token in localStorage
 
-	// Function to handle a login
-	const handleSuccessfulLogin = async (userId) => {
-		navigate(`/WelcomeUser/${userId}`);
-	};
+            return data;
+        } catch (error) {
+            throw new Error(error);
+        }
+    };
 
-	// Function to handle the form submission
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		console.log(inputs);
+    // Function to handle a login
+    const handleSuccessfulLogin = async (userId, token) => {
+        localStorage.setItem('authToken', token); // Saves the authentication token to local storage
+        navigate(`/WelcomeUser/${userId}`);
+    };
 
-		try {
-			const data = await sendRequest();
-			//Passes the user's ID to the /welcome page when logging in
-			handleSuccessfulLogin(data._id);
-		} catch (error) {
-			console.error(error);
-		}
-	};
-	
+    // Function to handle the form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(inputs);
 
+        try {
+            const data = await sendRequest();
+            // Passes the user's ID and token to the /welcome page when logging in
+            handleSuccessfulLogin(data._id, data.token);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
 
   return (

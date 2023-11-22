@@ -1,6 +1,5 @@
 /*Essentially a duplicate of the header, however this one is tweaked for UserPage.
 This is because we dont want to see the login or register buttons when we are logged in already*/
-
 import React from 'react';
 import logo from './util/images/logo.PNG';
 import Login from './util/Login.js';
@@ -17,6 +16,11 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import { Link} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
+
+
+
 
 const About = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -34,8 +38,17 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Header() {
+export default function UserPageHeader({ navigateToRoom, handleDeleteUser }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+
 
   {/*const resolvedPath = useResolvedPath(to)
   const isActive  = useMatch({path:resolvedPath.pathname, end: true })*/}
@@ -200,9 +213,12 @@ export default function Header() {
           <a href="https://discord.gg/FuHSV3XRrf" className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"> 
             Discord
           </a>
-          <a href="#" className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
+         
+          <a href="" onClick={() => navigate("/room")} className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
             Schedule
           </a>
+
+
         </Popover.Group>
         
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
@@ -215,25 +231,57 @@ export default function Header() {
           
           {/*Divides out the navbar*/}
           <div class = "border-l border-slate-200 ml-6 pl-6 dark:border-slate-800"></div>
-         
-          {/*User settings*/}
-          <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider" class="text-white bg-red-600 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">User settings <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-          </svg>
-          </button>
-          {/*Dropdown menu*/}
-          <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownButton">
+    
+          {/* User settings dropdown */}
+          <div className="relative">
+            <button
+              id="dropdownDividerButton"
+              data-dropdown-toggle="dropdownDivider"
+              className="text-white bg-red-600 hover:bg-red-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              type="button"
+              onClick={toggleDropdown}
+            >
+              User settings{' '}
+              <svg
+                className={`w-2.5 h-2.5 ms-3 ${dropdownOpen ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+                fill="none"
+                viewBox="0 0 10 6"
+              >
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+              </svg>
+            </button>
+
+            {/* Dropdown menu */}
+            <div
+              id="dropdown"
+              className={`absolute z-10 ${dropdownOpen ? 'block' : 'hidden'} bg-red-100 border border-red-300 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 mt-2`}
+              style={{ width: 'calc(100%)' }}
+            >
+              <ul className="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownButton">
                 <li>
-                  <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                  {/* dropdown options below */}
                 </li>
                 <li>
-                  <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+                   {/* delete account*/}
+                  <a
+                    href="#"
+                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >
+                    Delete Account
+                  </a>
                 </li>
               </ul>
-              <div class="py-2">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log in</a>
+              <div className="py-2">
+                {/* logout*/}
+                <a
+                  href="/"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                >
+                  Log out
+                </a>
               </div>
+            </div>
           </div>
         </div>
       </nav>
@@ -291,18 +339,12 @@ export default function Header() {
                     </>
                   )}
                 </Disclosure>
-                <a
-                  href= "https://discord.gg/FuHSV3XRrf"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Discord
+                <a href= "https://discord.gg/FuHSV3XRrf"className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" >  Discord
                 </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
+                <Link to="/room" className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
                   Schedule
-                </a>
+                </Link>
+
               </div>
             </div>
           </div>

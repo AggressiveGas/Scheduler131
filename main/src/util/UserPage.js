@@ -4,14 +4,37 @@ import React, { useState } from "react";
 import { generateDate, months } from "./Calendar";
 import cn from "./cn";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+
+
 
 export default function UserPage() {
+	
 	const days = ["S", "M", "T", "W", "T", "F", "S"];
 	const currentDate = dayjs();
 	const [today, setToday] = useState(currentDate);
 	const [selectDate, setSelectDate] = useState(currentDate);
-  
+	const { userId } = useParams();
+
+    // Function to handle user deletion
+    const handleDeleteUser = async () => {
+        const userTokenHere = localStorage.getItem('authToken'); //gets token from localStorage
+
+        try {
+            const response = await axios.delete(`http://localhost:8080/api/user/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${userTokenHere}`
+                }
+            });
+            
+            console.log("User has been deleted");
+        } catch (error) {
+            console.error("Error deleting user: ", error);
+        }
+    };
 	return (
+		
     
 	<div className="flex gap-10 sm:divide-x justify-center px-6 py-12 sm:w-1/2 mx-auto items-center sm:flex-row flex-col">
 		<div className="w-96 h-96 ">
@@ -89,11 +112,20 @@ export default function UserPage() {
 			)}
 			</div>
 		</div>
+		
 		<div className="h-96 w-96 sm:px-5">
 			<h1 className=" font-semibold">
 			Schedule for {selectDate.toDate().toDateString()}
 			</h1>
             <p className="text-gray-400">No meetings for today.</p>
+			<button
+          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md cursor-pointer"
+          onClick={handleDeleteUser}
+		  
+        >
+			
+          Delete Account
+        </button>
 		</div>
 	</div>
 	);
