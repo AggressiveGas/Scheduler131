@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const {registerUser,loginUser,getMe,updateUser, getUsers,deleteUser, getUserRooms, } = require('../controllers/usercontroller') // import the functions from the controller
+const {registerUser,loginUser,getMe,updateUser, getUsers,deleteUser, getUserRooms, deleteUserNoParam } = require('../controllers/usercontroller') // import the functions from the controller
 const {protect} = require('../middlewares/authmiddleware')  // import the middleware
 
 
@@ -21,6 +21,7 @@ router.put('/:id',protect,updateUser)   // this is the route for updating a user
 
 // delete routes
 router.delete('/:id',protect, deleteUser)   // this is the route for deleting a user
+router.delete('/',protect, deleteUserNoParam)   // this is the route for deleting a user
 
 
 

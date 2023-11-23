@@ -198,6 +198,48 @@ const deleteUser = asyncHandler(async (req, res) => {
 })
 
 
+// @desc get delete user data
+// @route GET /api/user/:id
+// @access private 
+const deleteUserNoParam = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id) // gets the user data from the database
+
+    if(!user){  // if the user does not exist, throw an error at status 400
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+    for(let i=0;i<(user.roomlist).length; i++){     //removes traces of the user in roooms that they were in
+        const tmprm = await Room.findOne({joincode: user.roomlist[i]})
+        if(!tmprm){
+            break
+        }
+        
+        if(tmprm.administrator.equals(user._id)){   //if the user that is to be deleted is the creator of any rooms, these rooms will be deleted
+            for(let j=0;j<(tmprm.userlist).length;j++){      //removes the room id from member users' roomlists to prepare for deletion
+                const updatedUser = await User.findByIdAndUpdate(tmprm.userlist[i], {$pull: {roomlist: tmprm.joincode}}, {
+                    new: true,
+                    runValidators: true
+                })
+            }
+        
+            const deletedRoom = await Room.findOneAndDelete({joincode: tmprm.joincode})
+            i--
+        } else {
+            const updatedRoom = await Room.findOneAndUpdate({joincode: user.roomlist[i]}, {$pull: {userlist: user._id}}, {  //removes stale references of the to be deleted user from rooms they are in
+                new: true,
+                runValidators: true
+            })
+        }
+    }
+
+    const deletedUser = await User.findByIdAndDelete(req.user._id) // deletes the user data
+
+    res.status(200).json({deletedUser}).select('_id') // sends the deleted user id back
+
+})
+
+
 const generateToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET, {
         expiresIn: '30d'
@@ -212,4 +254,5 @@ module.exports = {  // export the functions
     getUsers,
     deleteUser,
     getUserRooms,
+    deleteUserNoParam
 }   
