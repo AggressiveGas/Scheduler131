@@ -32,6 +32,7 @@ app.use('/api/user', require('./routes/userroutes'));  // this is the route for 
 app.use('/api/rooms', require('./routes/roomroutes'));  // this is the route for the rooms
 app.use('/api/timeslots', require('./routes/timeAlgoRoutes'));  // this is the route for the time algorithm
 app.use('/api/user', require('./routes/availabilityroutes'));
+app.use('/api/meetings', require('./routes/meetingroutes'));
 
 
 // error handler
