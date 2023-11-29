@@ -49,6 +49,20 @@ export default function UserPageHeader({ navigateToRoom, handleDeleteUser }) {
   };
 
 
+  //function to logout and clear local storage
+  const logout = () => {
+    // Clear all relevant keys from local storage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userEmail');
+  
+    // Navigate to the login page
+    navigate('/login');
+  };
+  
+
+
 
   {/*const resolvedPath = useResolvedPath(to)
   const isActive  = useMatch({path:resolvedPath.pathname, end: true })*/}
@@ -277,7 +291,8 @@ export default function UserPageHeader({ navigateToRoom, handleDeleteUser }) {
                 <a
                   href="/"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >
+                  onClick = { logout }
+               >
                   Log out
                 </a>
               </div>
