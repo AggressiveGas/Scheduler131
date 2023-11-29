@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';  // Add useLocation import
 import Header from './Header';
 import UserPageHeader from './UserPageHeader';
 import Home from './util/Home';
@@ -21,7 +21,9 @@ export default function App() {
       {shouldDisplayUserPageHeader ? <UserPageHeader /> : <Header />}
       
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* root path ("/") to "/login" */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/room" element={<Room />} />
