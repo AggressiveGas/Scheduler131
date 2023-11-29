@@ -39,6 +39,7 @@ export default function Login() {
 
     // Function to handle a login
     const handleSuccessfulLogin = async (userId, token) => {
+		localStorage.setItem('userId', userId); // Save userId to local storage
         localStorage.setItem('authToken', token); // Saves the authentication token to local storage
         navigate(`/WelcomeUser/${userId}`);
     };

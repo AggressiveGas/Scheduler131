@@ -17,22 +17,7 @@ export default function UserPage() {
 	const [selectDate, setSelectDate] = useState(currentDate);
 	const { userId } = useParams();
 
-    // Function to handle user deletion
-    const handleDeleteUser = async () => {
-        const userTokenHere = localStorage.getItem('authToken'); //gets token from localStorage
 
-        try {
-            const response = await axios.delete(`http://localhost:8080/api/user/${userId}`, {
-                headers: {
-                    Authorization: `Bearer ${userTokenHere}`
-                }
-            });
-            
-            console.log("User has been deleted");
-        } catch (error) {
-            console.error("Error deleting user: ", error);
-        }
-    };
 	return (
 		
     
@@ -118,14 +103,7 @@ export default function UserPage() {
 			Schedule for {selectDate.toDate().toDateString()}
 			</h1>
             <p className="text-gray-400">No meetings for today.</p>
-			<button
-          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md cursor-pointer"
-          onClick={handleDeleteUser}
-		  
-        >
 			
-          Delete Account
-        </button>
 		</div>
 	</div>
 	);

@@ -16,8 +16,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import { Link} from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate} from "react-router-dom"; // Import useNavigate and useParams
+import axios from "axios"; // Import axios
 
 
 
@@ -38,7 +38,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function UserPageHeader({ navigateToRoom, handleDeleteUser }) {
+export default function UserPageHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -48,6 +48,39 @@ export default function UserPageHeader({ navigateToRoom, handleDeleteUser }) {
     setDropdownOpen(!dropdownOpen);
   };
 
+
+  const handleDeleteAccount = async () => {
+    // Display a confirmation dialog
+    const confirmed = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
+  
+    // If the user confirms, proceed with the deletion
+    if (confirmed) {
+      const userTokenHere = localStorage.getItem("authToken");
+      const userId = localStorage.getItem("userId"); // Get userId from local storage
+  
+      try {
+        await axios.delete(`http://localhost:8080/api/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${userTokenHere}`,
+          },
+        });
+  
+        //need to clear out local tokens since it auto logs them out afterwards and can be security risk
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userEmail');
+        console.log("User has been deleted");
+        // Redirect to login page after successful deletion
+        navigate("/login");
+      } catch (error) {
+        console.error("Error deleting user: ", error);
+      }
+    } else {
+      // The user clicks "Cancel" in the confirmation dialog
+      console.log("Account deletion cancelled.");
+    }
+  };
 
   //function to logout and clear local storage
   const logout = () => {
@@ -278,11 +311,11 @@ export default function UserPageHeader({ navigateToRoom, handleDeleteUser }) {
                 </li>
                 <li>
                    {/* delete account*/}
-                  <a
-                    href="#"
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    Delete Account
+                   <a
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                      onClick={handleDeleteAccount}
+                    >
+                      Delete Account
                   </a>
                 </li>
               </ul>
