@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
+import axios from 'axios'; //going to be used to calls like on any other form {personally I like axios}
 
+
+//Pop-ups that the user would see(the UI setup for rooms)
 const Room = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const [roomCode, setRoomCode] = useState(''); //holds the entered room code
+  const [roomName, setRoomName] = useState(''); //holds the entered room name
+
 
   const handleAddClick = () => {
     setShowPopup(true);
@@ -25,6 +31,52 @@ const Room = () => {
     setShowCreatePopup(false);
   };
 
+
+//functionalities for creating and joining rooms:
+//Function to create a new room
+const createRoomApiCall = async (roomName) => {
+
+  //Since token is stored locally, gonna need to grab it for authorization otherwise can't make or join rooms
+  try {
+    const userTokenHere = localStorage.getItem("authToken");
+
+    const response = await axios.post('http://localhost:8080/api/rooms', { name: roomName }, {
+      headers: {
+        Authorization: `Bearer ${userTokenHere}`,
+      },
+    });
+
+    //console log for success
+    console.log('Room created successfully:', response.data);
+  } catch (error) {
+    //console log for error
+    console.error('Error creating room:', error.response.data.message);
+  }
+};
+
+// Function to join a room
+const joinRoomApiCall = async (roomCode) => {
+
+  //Since token is stored locally, gonna need to grab it for authorization otherwise can't make or join rooms
+
+  try {
+    const userTokenHere = localStorage.getItem("authToken");
+
+    const response = await axios.post(`http://localhost:8080/api/rooms/${roomCode}/users`, null, {
+      headers: {
+        Authorization: `Bearer ${userTokenHere}`,
+      },
+    });
+
+    //console log for success
+    console.log('Joined room successfully:', response.data);
+  } catch (error) {
+    //console log for error
+    console.error('Error joining room:', error.response.data.message);
+  }
+};
+
+//everything below is formatting/buttons/inputs for the pop up forms.
   return (
     <div className="container flex flex-col items-start justify-start h-screen px-9 py-12 relative">
       <button
@@ -85,6 +137,8 @@ const Room = () => {
               type="text"
               className="border border-gray-400 px-3 py-2 rounded w-full"
               placeholder="Enter code"
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value)}
             />
 
              {/* Join Room button after they put in their code*/}
@@ -92,11 +146,8 @@ const Room = () => {
               className="bg-blue-500 hover:bg-blue-700 text-white px-8 py-2 rounded mt-4"
               onClick={() => {
                 // Add logic for joining a room
-                /*
-
-                    LOGIC
+                joinRoomApiCall(roomCode); //pass the user's input value to the call
         
-                */
                 setShowAddPopup(false);
               }}
             >
@@ -124,6 +175,8 @@ const Room = () => {
               type="text"
               className="border border-gray-400 px-3 py-2 rounded w-full"
               placeholder="Enter room name"
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
             />
 
             {/* Create Room button after they put in their new room name*/}
@@ -131,11 +184,8 @@ const Room = () => {
               className="bg-green-500 hover:bg-green-700 text-white px-8 py-2 rounded mt-4"
               onClick={() => {
                 // Add logic for creating a room
-                /*
-
-                    LOGIC
+                createRoomApiCall(roomName); //pass the user's input for room name to api call
         
-                */
                 setShowCreatePopup(false);
               }}
             >
