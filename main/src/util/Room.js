@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios'; //going to be used to calls like on any other form {personally I like axios}
-
+import './RoomStyling.css';
 
 //Pop-ups that the user would see(the UI setup for rooms)
 const Room = () => {
@@ -10,8 +10,10 @@ const Room = () => {
   const [showAvailabilityPopup, setShowAvailabilityPopup] = useState(false);
   const [roomCode, setRoomCode] = useState(''); //holds the entered room code
   const [roomName, setRoomName] = useState(''); //holds the entered room name
+  const [userRooms, setUserRooms] = useState([]);//will hold list of rooms user is associated with
+  const [selectedRoom, setSelectedRoom] = useState(null); //will hold selected rooms on ui
 
-
+  
   const handleAddClick = () => {
     setShowPopup(true);
   };
@@ -36,6 +38,10 @@ const Room = () => {
     setShowAddPopup(false);
     setShowCreatePopup(false);
     setShowAvailabilityPopup(false);
+  };
+
+  const handleRoomClick = (room) => {
+    setSelectedRoom(room);
   };
 
 
@@ -83,16 +89,112 @@ const joinRoomApiCall = async (roomCode) => {
   }
 };
 
+
+//this here will get the users rooms that they joined or created.
+useEffect(() => {
+  const fetchUserRooms = async () => {
+    try {
+      
+      const userId = localStorage.getItem("userId");
+      const userTokenHere = localStorage.getItem("authToken");
+      const response = await axios.get(`http://localhost:8080/api/user/${userId}/rooms`, {
+        headers: {
+          Authorization: `Bearer ${userTokenHere}`,
+        },
+      });
+
+      const roomsWithUserDetails = await Promise.all(
+        response.data.map(async (room) => {
+          const userDetailsList = await Promise.all(
+            room.userlist.map(async (userId) => {
+              const userResponse = await axios.get(`http://localhost:8080/api/user/${userId}`);
+              return userResponse.data;
+            })
+          );
+          return { ...room, userDetailsList };
+        })
+      );
+
+      setUserRooms(roomsWithUserDetails || []);
+    } catch (error) {
+      console.error('Error fetching user rooms:', error.response.data.message);
+    }
+  };
+
+  fetchUserRooms();
+}, []);
+
+
+//instead of grabbing user ID I need their names which will be displayed in room details after
+const fetchUserDetails = async (userId) => {
+  try {
+    const userTokenHere = localStorage.getItem("authToken");
+    const response = await axios.get(`http://localhost:8080/api/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${userTokenHere}`,
+      },
+    });
+
+    return response.data; // Assuming the user details are returned in the response
+  } catch (error) {
+    console.error('Error fetching user details:', error.response.data.message);
+    return null;
+  }
+};
+
+
 //everything below is formatting/buttons/inputs for the pop up forms.
-  return (
-    <div className="container flex flex-col items-start justify-start h-screen px-9 py-12 relative">
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-10 px-16 rounded flex items-center"
-        onClick={handleAddClick}
-      >
-        <span className="mr-2 text-4xl">+</span>
-        Add Room
-      </button>
+  return (   
+<div className="container flex flex-wrap items-start justify-start h-screen px-9 py-12 relative">
+    {/* +add room button */}
+    <button
+      className={`room-button ${selectedRoom ? 'selected-room' : 'add-room-button'}`}
+      onClick={handleAddClick}
+    >
+      <span className="mr-2 text-4xl">+</span>
+      Add Room
+    </button>
+
+    {/* Render clickable room buttons */}
+    {userRooms.map((room) => (
+        <button
+          key={room.id}
+          className="room-button"
+          onClick={() => handleRoomClick(room)}
+        >
+          {room.name}
+        </button>
+      ))}
+
+{selectedRoom && (
+        // Overlay for Room Details
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-0">
+          <div className="bg-white p-8 rounded-lg shadow-md relative w-80 flex flex-col items-center border border-gray-300">
+            <button
+              className="text-red-600 hover:text-red-800 absolute top-0 right-2"
+              onClick={() => setSelectedRoom(null)}
+            >
+              <span className="text-2xl font-bold">&times;</span>
+            </button>
+
+            <p className="text-lg font-semibold mb-4">Room Details</p>
+
+            <p>Room Name: {selectedRoom.name}</p>
+            <p>Join Code: {selectedRoom.joincode}</p>
+
+            <p>
+              Users:{' '}
+              {selectedRoom.userDetailsList.map((user, index) => (
+                <span key={user.id}>
+                  {user.name}
+                  {index !== selectedRoom.userDetailsList.length - 1 && ', '}
+                </span>
+              ))}
+            </p>
+          </div>
+        </div>
+      )}
+
 
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center">

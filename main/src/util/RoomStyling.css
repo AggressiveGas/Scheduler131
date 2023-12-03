@@ -1,0 +1,33 @@
+/* this css file is for formatting the select room buttons on room.js*/
+
+.container {
+    width: 200%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Adjust the gap between buttons */
+}
+
+/* Style for each room button */
+.room-button,
+.add-room-button {
+    box-sizing: border-box;
+    width: 200px; /* Set a fixed width for each button (16.666% is 1/6 for 6 buttons in a row) */
+    height: 130px; /* Set a fixed height */
+    background-color: #1894e7;
+    margin-bottom: 0px; /* Adjust the vertical gap */
+    color: #fff;
+    font-weight: bold;
+    padding: -100px -100px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-button:hover,
+.add-room-button:hover {
+    background-color: rgba(37, 212, 25, 0.993);
+}
