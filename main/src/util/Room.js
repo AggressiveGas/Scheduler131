@@ -7,6 +7,7 @@ const Room = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const [showAvailabilityPopup, setShowAvailabilityPopup] = useState(false);
   const [roomCode, setRoomCode] = useState(''); //holds the entered room code
   const [roomName, setRoomName] = useState(''); //holds the entered room name
 
@@ -25,10 +26,16 @@ const Room = () => {
     setShowCreatePopup(true); // Show the "Create" popup
   };
 
+  const handleAvailability = () => {
+    setShowPopup(false); // Close the main popup after clicking create --SideNote: I did this because don't want multiple windows show up and making it confusing for the user
+    setShowAvailabilityPopup(true); // Show the "Availability" popup
+  };
+
   const handleClosePopup = () => {
     setShowPopup(false);
     setShowAddPopup(false);
     setShowCreatePopup(false);
+    setShowAvailabilityPopup(false);
   };
 
 
@@ -115,6 +122,14 @@ const joinRoomApiCall = async (roomCode) => {
             >
               Create
             </button>
+
+            <button
+            //this is the green "create" button below  the "OR" statement
+              className="bg-blue-500 hover:bg-blue-700 text-white px-8 py-2 rounded mb-2"
+              onClick={handleAvailability}
+            >
+              Availability
+            </button>
           </div>
         </div>
       )}
@@ -191,6 +206,44 @@ const joinRoomApiCall = async (roomCode) => {
             >
               Create Room
             </button>
+          </div>
+        </div>
+      )}
+{/*Below is the Availability popup box alongside its formatting*/}
+      {showAvailabilityPopup && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg shadow-md relative w-80 flex flex-col items-center border border-gray-300">
+            <button
+              className="text-red-600 hover:text-red-800 absolute top-0 right-2"
+              onClick={handleClosePopup}
+            >
+              <span className="text-2xl font-bold">&times;</span>
+            </button>
+
+            <p className="text-lg font-semibold mb-4">Select your Availability</p>
+
+            {/* Input textbox for entering room code 
+            <input
+              type="text"
+              className="border border-gray-400 px-3 py-2 rounded w-full"
+              placeholder="Enter code"
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value)}
+            />
+            */}
+
+             {/* Join Room button after they put in their code
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white px-8 py-2 rounded mt-4"
+              onClick={() => {
+                // Add logic for joining a room
+                joinRoomApiCall(roomCode); //pass the user's input value to the call
+        
+                setShowAddPopup(false);
+              }} 
+            >
+              Join Room
+            </button> */}
           </div>
         </div>
       )}
