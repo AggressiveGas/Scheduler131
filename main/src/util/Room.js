@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import TimezoneSelect from "react-timezone-select";
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; //going to be used to calls like on any other form {personally I like axios}
 import './RoomStyling.css';
 
@@ -8,10 +10,12 @@ const Room = () => {
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showAvailabilityPopup, setShowAvailabilityPopup] = useState(false);
+  const [selectedtimezone, setSelectedTimezone] = useState(''); //holds the entered timezone
   const [roomCode, setRoomCode] = useState(''); //holds the entered room code
   const [roomName, setRoomName] = useState(''); //holds the entered room name
   const [userRooms, setUserRooms] = useState([]);//will hold list of rooms user is associated with
   const [selectedRoom, setSelectedRoom] = useState(null); //will hold selected rooms on ui
+  const navigate = useNavigate();
 
   
   const handleAddClick = () => {
@@ -231,6 +235,7 @@ const fetchUserDetails = async (userId) => {
               onClick={handleAvailability}
             >
               Availability
+              {/*<a href="" onClick={() => navigate("/availability")} className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"></a>*/}
             </button>
           </div>
         </div>
@@ -323,6 +328,17 @@ const fetchUserDetails = async (userId) => {
             </button>
 
             <p className="text-lg font-semibold mb-4">Select your Availability</p>
+            <p className="text-lg font-semibold mb-2">Pick your Timezone</p>
+            <TimezoneSelect
+              value={selectedtimezone}
+              onChange={setSelectedTimezone}
+            />
+            <a href="#" onClick={() => navigate("/availability")} className="block rounded-lg px-3 py-2 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
+              Link to Availability
+            </a>
+               {/* useNavigate('/Availability'); /*this is the button that will take you to the availability page*/}
+
+            {/* keep this as it is if anyone wants to use this code. later on, we can delete it*/}
 
             {/* Input textbox for entering room code 
             <input
