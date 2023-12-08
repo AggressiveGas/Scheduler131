@@ -7,7 +7,6 @@ import UserPage from './util/UserPage';
 import Login from './util/Login';
 import Register from './util/Register';
 import Room from './util/Room';
-import Availability from './util/Availability';
 
 export default function App() {
   const location = useLocation();
@@ -28,7 +27,6 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/room" element={<Room />} />
-        <Route path="/availability" element={<Availability />} />
        
 
         {/*Basically the UserPage will display UserPageHeader instead of Header*/}
