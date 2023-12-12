@@ -28,7 +28,7 @@ const Room = () => {
   const [date, setDate] = React.useState(new Date());
   const [from, setFrom] = useState("0");
   const [to, setTo] = useState("0");
-
+  const [commonAvailability, setCommonAvailability] = useState(null); //holds common availability
 
   //trying to split the date so that it can later be used for comparisons
   const SplitDate = (defaultValue) => {
@@ -58,7 +58,10 @@ const Room = () => {
     setShowAvailabilityPopup(true); // Show the "Availability" popup
     setSelectedRoom(false);
 
-
+    // Fetch common availability when the Availability popup is opened
+    if (selectedRoom) {
+      fetchCommonAvailability(selectedRoom);
+    }
   };
 
 
@@ -77,26 +80,11 @@ const Room = () => {
     setShowAvailabilityPopup(false);
   }
 
-
-  //FOR NOW TRYING TO SEE HOW TO RETRIEVE THE FREAKING COMMON AVAILABILITIES
+//when user clicks room shows them the next step
   const handleRoomClick = async (room) => {
     setSelectedRoom(room);
-  
-    try {
-      // Basically call the timealgo route, and the time algo should compare all availabilities i think
-      const response = await axios.get(`http://localhost:8080/api/timeslots/${room.joincode}`);
-      const commonAvailability = response.data;
-  
-      //Output if it compared and show common availability
-      console.log('Common Availability:', commonAvailability);
-    } catch (error) {
-      console.error('Error fetching common availability:', error.response.data.message);
-    }
   };
   
-
-
-
 
 //functionalities for creating and joining rooms:
 //Function to create a new room
@@ -242,7 +230,10 @@ const now = new Date();
 
 // Function to generate an array of time slots with 10-minute intervals starting from 12:00 PM
 const generateTimeSlots = () => {
-  const startTime = moment().startOf('day').add(12, 'hours'); // Start from 12:00 PM
+  /*old one*/
+  /*const startTime = moment().startOf('day').add(12, 'hours'); // Start from 12:00 PM*/
+  
+  const startTime = moment().startOf('day'); // Start from 12:00 AM (midnight)
   const timeSlots = [];
 
   // Loop to generate 144 time slots (10-minute intervals for 24 hours)
@@ -320,7 +311,20 @@ const handleAvailabilitySubmit = async () => {
 };
 
   
-  
+  // Function to fetch and set common availability
+  const fetchCommonAvailability = async (room) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/timeslots/${room.joincode}`);
+      const commonAvailability = response.data;
+
+      // Set the common availability in the state
+      setCommonAvailability(commonAvailability);
+
+      console.log('Common Availability:', commonAvailability);
+    } catch (error) {
+      console.error('Error fetching common availability:', error.response.data.message);
+    }
+  };
 
 
 
@@ -392,19 +396,37 @@ const handleAvailabilitySubmit = async () => {
 
 
             <p className='pt-4'><b>Group's Availability</b></p>
-            {/*
-           
-            Groups Availability will go here
-           
-            */}
+            {/* Button to fetch and show common availability */}
+            <button
+              className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
+              onClick={() => fetchCommonAvailability(selectedRoom)}
+            >  
+              Show Common Availability
+            </button>
 
-
-          </div>
-        </div>
-      )}
-
-
-
+            {/* Display common availability if available */}
+            {commonAvailability && (
+                          <div className="mt-4">
+                            <p className='pb-2'><b>Common Availability</b></p>
+                            {/* Loop through the days and display common availability for each day */}
+                            {Object.keys(commonAvailability).map((day) => (
+                              <div key={day}>
+                                <p>{day}</p>
+                                <ul>
+                                  {commonAvailability[day].map((interval) => (
+                                    <li key={interval}>
+                                      {/* Convert interval back to the proper time and display */}
+                                      {generateTimeSlots()[interval]}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center">
