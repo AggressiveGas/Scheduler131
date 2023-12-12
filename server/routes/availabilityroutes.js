@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {getAvailability, createAvailability, updateAvailability, deleteAvailability} = require('../controllers/availabilitycontroller')
+const {getAvailability, createAvailability, updateAvailability, deleteAvailability} = require('../controllers/availabilitycontroller2')
 const {protect} = require('../middlewares/authmiddleware')
 
 

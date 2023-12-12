@@ -1,17 +1,21 @@
 const mongoose = require('mongoose')
 
-const timeFormat = new mongoose.Schema({
-    day: String,
-    intervals: {start: Number, end: Number, _id: false}
-}, { _id: false });
-
 const meetingSchema = new mongoose.Schema({
     roomcode: {
         type: String,
         required: true,
         unique: true,
     },
-    time: timeFormat
+    day: {
+        type: String,
+        required: true
+    },
+    start: {
+        type: Number
+    },
+    end: {
+        type: Number
+    }
 }, 
 {
     timestamps: true

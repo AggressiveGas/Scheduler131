@@ -12,16 +12,27 @@ const createMeeting = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error('Invalid room code')
     }
+
+    const {day, start, end} = req.body;
+
+    if(!day || !start || !end || start > end){
+        res.status(400)
+        throw new Error('Invalid meeting time')
+    }
     
     const meeting = await Meeting.create({    // creates the meeting
         roomcode: req.params.joincode,
-        time: req.body.time
+        day: day,
+        start: start,
+        end: end
     })
 
     if(meeting){   // if the meeting is created, send the meeting data back
         res.status(201).json({
             roomcode: meeting.roomcode,
-            time: meeting.time
+            day: meeting.day,
+            start: meeting.start,
+            end: meeting.end
         })
     } else {    // if the room is not created, throw an error at status 400
         res.status(400)
