@@ -6,20 +6,10 @@ import './RoomStyling.css';
 import DateTimePicker from 'react-tailwindcss-datetimepicker';
 import moment from 'moment-timezone';
 import { Input, Popover, PopoverHandler, PopoverContent} from "@material-tailwind/react";
-import { format, addHours } from "date-fns";
+import { format } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Timepicker, initTE } from "tw-elements";
-import TimePicker from 'react-time-picker';
-
-
-
-
-
-
-
-
-
 
 
 
@@ -39,27 +29,38 @@ const Room = () => {
   const [from, setFrom] = useState("0");
   const [to, setTo] = useState("0");
 
-  
+
+  //trying to split the date so that it can later be used for comparisons
+  const SplitDate = (defaultValue) => {
+    const arrayDate = defaultValue.toLocaleDateString().split("/");
+    console.log(defaultValue);
+  }
+ 
   const handleAddClick = () => {
     setShowPopup(true);
   };
+
 
   const handleAddRoom = () => {
     setShowPopup(false); // Close the main popup after clicking add --SideNote: I did this because don't want multiple windows show up and making it confusing for the user
     setShowAddPopup(true); // Show the "Add" popup
   };
 
+
   const handleCreateRoom = () => {
     setShowPopup(false); // Close the main popup after clicking create --SideNote: I did this because don't want multiple windows show up and making it confusing for the user
     setShowCreatePopup(true); // Show the "Create" popup
   };
+
 
   const handleAvailability = () => {
     setShowPopup(false); // Close the main popup after clicking create --SideNote: I did this because don't want multiple windows show up and making it confusing for the user
     setShowAvailabilityPopup(true); // Show the "Availability" popup
     setSelectedRoom(false);
 
+
   };
+
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -69,29 +70,50 @@ const Room = () => {
   };
 
 
+
+
   const handlePreviousPagePopup = () => {
     //setSelectedRoom(true);
     setShowAvailabilityPopup(false);
   }
 
-  const handleRoomClick = (room) => {
+
+  //FOR NOW TRYING TO SEE HOW TO RETRIEVE THE FREAKING COMMON AVAILABILITIES
+  const handleRoomClick = async (room) => {
     setSelectedRoom(room);
+  
+    try {
+      // Basically call the timealgo route, and the time algo should compare all availabilities i think
+      const response = await axios.get(`http://localhost:8080/api/timeslots/${room.joincode}`);
+      const commonAvailability = response.data;
+  
+      //Output if it compared and show common availability
+      console.log('Common Availability:', commonAvailability);
+    } catch (error) {
+      console.error('Error fetching common availability:', error.response.data.message);
+    }
   };
+  
+
+
 
 
 //functionalities for creating and joining rooms:
 //Function to create a new room
 const createRoomApiCall = async (roomName) => {
 
+
   //Since token is stored locally, gonna need to grab it for authorization otherwise can't make or join rooms
   try {
     const userTokenHere = localStorage.getItem("authToken");
+
 
     const response = await axios.post('http://localhost:8080/api/rooms', { name: roomName }, {
       headers: {
         Authorization: `Bearer ${userTokenHere}`,
       },
     });
+
 
     //console log for success
     console.log('Room created successfully:', response.data);
@@ -101,19 +123,24 @@ const createRoomApiCall = async (roomName) => {
   }
 };
 
+
 // Function to join a room
 const joinRoomApiCall = async (roomCode) => {
 
+
   //Since token is stored locally, gonna need to grab it for authorization otherwise can't make or join rooms
+
 
   try {
     const userTokenHere = localStorage.getItem("authToken");
+
 
     const response = await axios.post(`http://localhost:8080/api/rooms/${roomCode}/users`, null, {
       headers: {
         Authorization: `Bearer ${userTokenHere}`,
       },
     });
+
 
     //console log for success
     console.log('Joined room successfully:', response.data);
@@ -124,11 +151,13 @@ const joinRoomApiCall = async (roomCode) => {
 };
 
 
+
+
 //this here will get the users rooms that they joined or created.
 useEffect(() => {
   const fetchUserRooms = async () => {
     try {
-      
+     
       const userId = localStorage.getItem("userId");
       const userTokenHere = localStorage.getItem("authToken");
       const response = await axios.get(`http://localhost:8080/api/user/${userId}/rooms`, {
@@ -136,6 +165,7 @@ useEffect(() => {
           Authorization: `Bearer ${userTokenHere}`,
         },
       });
+
 
       const roomsWithUserDetails = await Promise.all(
         response.data.map(async (room) => {
@@ -149,14 +179,18 @@ useEffect(() => {
         })
       );
 
+
       setUserRooms(roomsWithUserDetails || []);
     } catch (error) {
       console.error('Error fetching user rooms:', error.response.data.message);
     }
   };
 
+
   fetchUserRooms();
 }, []);
+
+
 
 
 //instead of grabbing user ID I need their names which will be displayed in room details after
@@ -169,6 +203,7 @@ const fetchUserDetails = async (userId) => {
       },
     });
 
+
     return response.data; // Assuming the user details are returned in the response
   } catch (error) {
     console.error('Error fetching user details:', error.response.data.message);
@@ -176,7 +211,8 @@ const fetchUserDetails = async (userId) => {
   }
 };
 
-{/* For the DATETIMEPICKER UI. Delete when availabilities are resolved
+
+//for the DATETIMEPICKER UI
 const now = new Date();
   const start = moment(
     new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
@@ -188,79 +224,109 @@ const now = new Date();
   });
   const ranges = {
     Today: [moment(start), moment(end)],
-    
+   
   };
   const local = {
     format: 'DD-MM-YYYY HH:mm',
     sundayFirst: false,
   };
   const maxDate = moment(start).add(30, 'month');
+
+
   function handleApply(startDate, endDate) {
     setRange({ start: startDate, end: endDate });
   }
-  */}
 
-  //These are being used for the "Select your availability" input field. 
-  const startDate = date ? format(date, "MM/dd/yyyy,") : "Select a Date";
-  //const startTime = date ? format(date, "h:mm a") : "";
-  //const endTime = date ? format(addHours(date, 1), "h:mm a") : "";
-  //const value = date ? `${startDate} ${startTime} to ${endTime}` : "Select a Date and Time";
-  
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [selectedStartTime, setSelectedStartTime] = useState(null);
-  const [selectedEndTime, setSelectedEndTime] = useState(null);
 
-  const updateDate = () => {
-    setSelectedDate(date);
-    if (date) {
-      const day = date.getDate();
-      const month = date.getMonth() + 1; // Months are zero-indexed, so we add 1
-      setSelectedDay(day);
-      setSelectedMonth(month);
-    } else {
-      setSelectedDay(null);
-      setSelectedMonth(null);
-    }
-  };
-  
-  const handleDateChange = (date) => {
-    updateDate(date);
-  };
 
-  // In progress: Split the date so that it can later be used for comparisons
-  const SplitDate = (defaultValue) => {
-    const arrayDate = defaultValue.toLocaleDateString().split("/");
-    console.log(defaultValue);
+
+// Function to generate an array of time slots with 10-minute intervals starting from 12:00 PM
+const generateTimeSlots = () => {
+  const startTime = moment().startOf('day').add(12, 'hours'); // Start from 12:00 PM
+  const timeSlots = [];
+
+  // Loop to generate 144 time slots (10-minute intervals for 24 hours)
+  for (let i = 0; i < 144; i++) {
+      // Calculate the time for each slot and format it as 'hh:mm A'
+      const time = startTime.clone().add(i * 10, 'minutes').format('hh:mm A');
+      timeSlots.push(time);
   }
 
-
-  //for display on the input field
-  const [startTime, setStartTime] = useState({ hours: '1', minutes: '0', ampm: 'am' });
-  const [endTime, setEndTime] = useState({ hours: '1', minutes: '0', ampm: 'am' });
-
-
-  const handleTimeChange = (event, timeType, part) => {
-    const selectedTime = { ...timeType, [part]: event.target.value };
-    timeType === 'start' ? setStartTime(selectedTime) : setEndTime(selectedTime);
-  };
-
-  const formatTime = (time) => (time ? `${time.hours}:${time.minutes} ${time.ampm}` : '');
-
-  const value = date ? `${startDate} ${formatTime(startTime)} to ${formatTime(endTime)}`
-  : 'Select a Date and Time';
-
-  const showAlert = () => {
-    const message = `You have selected: ${selectedMonth}/${selectedDay} from ${
-      selectedStartTime} to ${selectedEndTime}`;
-    alert(message);
-  };
+  return timeSlots;
+};
+ 
+// Function to convert a time string to the number of 10-minute intervals from midnight
+const timeToIntervals = (time) => {
+  const [hours, minutes] = time.split(":").map(Number);
+// Calculate the total number of intervals using the formula: hours * 6 + Math.floor(minutes / 10) math make brain hurt btw
+  return hours * 6 + Math.floor(minutes / 10);
+};
 
 
+const handleAvailabilitySubmit = async () => {
+  try {
+    //DATE FORMATTING AND STUFFS OK
+    const day = format(date, "MM-dd-yyyy");
+    const startTime = moment(from, ["h:mm A"]).format("HH:mm");
+    const endTime = moment(to, ["h:mm A"]).format("HH:mm");
+    const startIntervals = timeToIntervals(startTime);
+    const endIntervals = timeToIntervals(endTime);
 
+    /* The old json format sent to backend changed it because we're nuking weekly and the label
+    const availabilityData = {
+      label: 'Users Selected Availability',
+      weeklyAvailability: [
+        {
+          day: day,
+          intervals: [{ start: startIntervals, end: endIntervals }]
+        }
+      ]
+    };
+    */
+
+    const availabilityData = {
+      day: day,
+      intervals: [
+        {
+          start: startIntervals,
+          end: endIntervals
+        }
+      ]
+    };
+
+    console.log('Availability Payload:', availabilityData); 
+
+    //grab userid and token
+    const userTokenHere = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
+
+    //I STRUGGLED WITH THIS POST for some reason its /user/id even though its not in availabilityroutes.js
+    const response = await axios.post(
+      `http://localhost:8080/api/user/${userId}/availability`,
+      availabilityData,
+      {
+        headers: {
+          Authorization: `Bearer ${userTokenHere}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    //just logs to let know if post went through or not
+    console.log('Availability submitted successfully:', response.data);
+  } catch (error) {
+    console.error('Error submitting availability:', error.message);
+  }
+};
+
+  
+  
+
+
+
+ 
 //everything below is formatting/buttons/inputs for the pop up forms.
-  return (   
+  return (  
 <div className="container flex flex-wrap items-start justify-start h-screen px-9 py-12 relative">
     {/* +add room button */}
     <button
@@ -270,6 +336,7 @@ const now = new Date();
       <span className="mr-2 text-4xl">+</span>
       Add Room
     </button>
+
 
     {/* Render clickable room buttons */}
     {userRooms.map((room) => (
@@ -283,6 +350,8 @@ const now = new Date();
     ))}
 
 
+
+
 {selectedRoom && (
         // Overlay for Room Details
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-0">
@@ -294,10 +363,13 @@ const now = new Date();
               <span className="text-2xl font-bold">&times;</span>
             </button>
 
+
             <p className="text-lg font-semibold mb-4">Room Details</p>
+
 
             <p>Room Name: {selectedRoom.name}</p>
             <p>Join Code: {selectedRoom.joincode}</p>
+
 
             <p>
               Users:{' '}
@@ -309,40 +381,29 @@ const now = new Date();
               ))}
             </p>
 
-            {/* Delete this when availabilities are resolved
-            <DateTimePicker
-              ranges={ranges}
-              start={range.start}
-              end={range.end}
-              local={local}
-              maxDate={maxDate}
-              applyCallback={handleApply}
-            > 
-              <a href="#" onClick={handleAvailability} 
-                className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
-              >  
-                DateTimePicker UI
-              </a>
-            </DateTimePicker>
-            */}
 
-            <a href="#" onClick={handleAvailability} 
+            <a href="#" onClick={handleAvailability}
                 className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
             >  
                 Add your Availability
             </a>
 
 
+
+
             <p className='pt-4'><b>Group's Availability</b></p>
             {/*
-            
+           
             Groups Availability will go here
-            
+           
             */}
+
 
           </div>
         </div>
       )}
+
+
 
 
       {showPopup && (
@@ -356,6 +417,7 @@ const now = new Date();
               <span className="text-2xl font-bold">&times;</span>
             </button>
 
+
             <button
             //this is the blue "add" button above the "OR" statement
               className="bg-blue-500 hover:bg-blue-700 text-white px-10 py-2 rounded mb-2"
@@ -364,7 +426,9 @@ const now = new Date();
               Add
             </button>
 
+
             <p className="text-lg font-semibold my-2">OR</p>
+
 
             <button
             //this is the green "create" button below  the "OR" statement
@@ -377,6 +441,7 @@ const now = new Date();
         </div>
       )}
 
+
 {/*Below is the Add a new room popup box alongside its formatting*/}
       {showAddPopup && (
         <div className="fixed inset-0 flex items-center justify-center">
@@ -388,7 +453,9 @@ const now = new Date();
               <span className="text-2xl font-bold">&times;</span>
             </button>
 
+
             <p className="text-lg font-semibold mb-4">Enter a code to join a room</p>
+
 
             {/* Input textbox for entering room code */}
             <input
@@ -399,14 +466,16 @@ const now = new Date();
               onChange={(e) => setRoomCode(e.target.value)}
             />
 
+
              {/* Join Room button after they put in their code*/}
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white px-8 py-2 rounded mt-4"
               onClick={() => {
                 // Add logic for joining a room
                 joinRoomApiCall(roomCode); //pass the user's input value to the call
-        
+       
                 setShowAddPopup(false);
+                
               }}
             >
               Join Room
@@ -414,6 +483,7 @@ const now = new Date();
           </div>
         </div>
       )}
+
 
 {/*Below is the Create a new room popup box alongside its formatting*/}
       {showCreatePopup && (
@@ -426,7 +496,9 @@ const now = new Date();
               <span className="text-2xl font-bold">&times;</span>
             </button>
 
+
             <p className="text-lg font-semibold mb-4">Create a new room</p>
+
 
             {/* Input textbox for creating a new room-- SideNote: this is where they put the room name */}
             <input
@@ -437,13 +509,14 @@ const now = new Date();
               onChange={(e) => setRoomName(e.target.value)}
             />
 
+
             {/* Create Room button after they put in their new room name*/}
             <button
               className="bg-green-500 hover:bg-green-700 text-white px-8 py-2 rounded mt-4"
               onClick={() => {
                 // Add logic for creating a room
                 createRoomApiCall(roomName); //pass the user's input for room name to api call
-        
+       
                 setShowCreatePopup(false);
               }}
             >
@@ -456,34 +529,36 @@ const now = new Date();
       {showAvailabilityPopup && (
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="bg-white p-16 rounded-lg shadow-md relative w-80 flex flex-col items-center border border-gray-300">
-            
+           
             {/*
-            
+           
             The below would let users go back to the previous page    
+
 
             */}
             <button
               className="text-red-600 hover:text-red-800 absolute top-0 left-2"
               onClick={handlePreviousPagePopup}
             >
-              <span className="text-2xl font-bold">&larr;	</span>
+              <span className="text-2xl font-bold">&larr; </span>
             </button>
 
-            <p className="text-lg font-semibold mb-4">Select your availability</p>
 
-            {/* Availability */}
+            <p className="text-lg font-semibold mb-4">Select your Availability</p>
+
+
+
             <div className="p-26">
               <Popover placement="right">
                 <PopoverHandler>
-                <Input
-                  onChange={() => null}
-                  type = "text"
-                  value={value}
-                  className="rounded-lg mr-56 pl-13 pr-0"
-                />
+                  <Input
+                    onChange={() => null}
+                    value={date ? format(date, "PPP") : "Select a Date and Time"}
+                    className = "rounded-lg"
+                  />
                 </PopoverHandler>
                 <PopoverContent>
-                  
+                 
                   {/*Date/Day picker */}
                   <DayPicker
                     mode="single"
@@ -491,10 +566,10 @@ const now = new Date();
                     onSelect={setDate}
                     value = {setDate}
                     showOutsideDays
-                    showTimeSelect 
+                    showTimeSelect
                     timeIntervals = {10}
                     timeFormat = "hh:mm"
-                    
+                   
                     className="border-0"
                     classNames={{
                       caption: "flex justify-center py-2 mb-4 relative items-center",
@@ -502,7 +577,7 @@ const now = new Date();
                       nav: "flex items-center",
                       nav_button:
                         "h-6 w-6 bg-transparent hover:bg-blue-gray-50 p-1 rounded-full transition-colors duration-300",
-                      nav_button_previous: "absolute left-1.5", 
+                      nav_button_previous: "absolute left-1.5",
                       nav_button_next: "absolute right-1.5",
                       table: "w-full border-collapse",
                       head_row: "flex font-medium text-gray-900",
@@ -527,164 +602,57 @@ const now = new Date();
                         <ChevronRightIcon {...props} className="h-4 w-4 stroke-2" />
                       ),
                     }}
-                  
+                 
                   />
-                  <p>Selected Day: {selectedDay}</p>
-                  <p>Selected Month: {selectedMonth}</p>
+
+
                   <hr className= "mt-4"></hr>
-                  
-                  {/* Time picker component from react-time-picker. Currently not in use.
-                  <div>
-                    <h2>Select a Time:</h2>
-                    <TimePicker
-                      onChange={handleTimeChange}
-                      value={selectedTime}
-                      format="h:mm a"
-                      disableClock={true} // Optional: You can customize the appearance further
-                      clearIcon={null}    // Optional: Remove clear icon
-                      classNames = "border border-gray-300"
-                    />
-                    <p>Selected Time: {selectedTime}</p>
+
+
+                  {/*Time picker*/}
+                  <div className="mt-4 flex justify-center">
+                    <select id="from" className="p-2 border border-gray-300" onChange={(e) => setFrom(e.target.value)}>
+                      <option value="0">Select Time</option>
+                      {generateTimeSlots().map((time, index) => (
+                        <option key={index} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
+                    <b className="p-2">TO</b>
+                    <select id="toDate" className="p-2 border border-gray-300" onChange={(e) => setTo(e.target.value)}>
+                      <option value="0">Select Time</option>
+                      {generateTimeSlots().map((time, index) => (
+                        <option key={index} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  */}
+                 
 
-
-                  {/* Time picker */}
-                  <div class="mt-4 flex justify-center">
-                    <div class="flex p-2 border border-gray-300 rounded-lg">
-
-                      {/* The selected value is associated with the "name" attribute */}
-                      <select name="hours" class="bg-transparent appearance-none outline-none" 
-                        type="number"
-                        value={startTime.hours}
-                        onChange={(e) => handleTimeChange(e, 'start', 'hours')}>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">10</option>
-                        <option value="12">12</option>
-                      </select>
-                      <span class=" mr-3">:</span>
-                      <select name="minutes" class="bg-transparent appearance-none outline-none mr-4" type="number" value={startTime.minutes}
-                        onChange={(e) => handleTimeChange(e, 'start', 'minutes')}>
-                        <option value="0">00</option>
-                        <option value="30">30</option>
-                      </select>
-                      <select name="ampm" class="bg-transparent appearance-none outline-none" value={startTime.ampm}
-                        onChange={(e) => handleTimeChange(e, 'start', 'ampm')}>
-                        <option value="am">AM</option>
-                        <option value="pm">PM</option>
-                      </select>
-                    </div>
-                    <b className= "p-2">TO</b>
-                    <div class="flex p-2 border border-gray-300 rounded-lg">
-                      <select name="hours" class="bg-transparent appearance-none outline-none" type="number" value={endTime.hours}
-                        onChange={(e) => handleTimeChange(e, 'end', 'hours')}>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">10</option>
-                        <option value="12">12</option>
-                      </select>
-                      <span class=" mr-3">:</span>
-                      <select name="minutes" class="bg-transparent appearance-none outline-none mr-4" type="number" value={endTime.minutes}
-                        onChange={(e) => handleTimeChange(e, 'end', 'minutes')}>
-                        <option value="0">00</option>
-                        <option value="30">30</option>
-                      </select>
-                      <select name="ampm" class="bg-transparent appearance-none outline-none" value={endTime.ampm}
-                        onChange={(e) => handleTimeChange(e, 'end', 'ampm')}>
-                        <option value="am">AM</option>
-                        <option value="pm">PM</option>
-                      </select>
-                    </div>
-
-                  </div>
 
                  
-                  
-
-                  
                          
-                  <button 
+                  <button
                     className="bg-red-500 hover:bg-red-700 text-white px-10 py-2 rounded-lg mt-6 mb-2 ml-20"
-                    onClick={() => {
-                      handleDateChange(setDate);
-                      showAlert();
-                    }}>
+                    onClick={handleAvailabilitySubmit}>
                       Apply
                   </button>
-                  
+                 
                 </PopoverContent>
               </Popover>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-            
-            {/* Snippet for timezone selection 
-            <p className="text-lg font-semibold mb-2">Pick your Timezone</p>
-            <TimezoneSelect
-              value={selectedtimezone}
-              onChange={setSelectedTimezone}
-            />
-            */}
-
-            
-               {/* useNavigate('/Availability'); /*this is the button that will take you to the availability page*/}
-
-            {/* keep this as it is if anyone wants to use this code. later on, we can delete it*/}
-
-            {/* Input textbox for entering room code 
-            <input
-              type="text"
-              className="border border-gray-400 px-3 py-2 rounded w-full"
-              placeholder="Enter code"
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value)}
-            />
-            */}
-
-             {/* Join Room button after they put in their code
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white px-8 py-2 rounded mt-4"
-              onClick={() => {
-                // Add logic for joining a room
-                joinRoomApiCall(roomCode); //pass the user's input value to the call
-        
-                setShowAddPopup(false);
-              }} 
-            >
-              Join Room
-            </button> */}
           </div>
         </div>
-        
+       
       )}
     </div>
   );
 };
 
+
 export default Room;
+
+
+
