@@ -38,10 +38,11 @@ export default function Login() {
     };
 
     // Function to handle a login
-    const handleSuccessfulLogin = async (userId, token, userName) => {
+    const handleSuccessfulLogin = async (userId, token, userName, email) => {
 		localStorage.setItem('userId', userId); // Save userId to local storage
         localStorage.setItem('authToken', token); // Saves the authentication token to local storage
 		localStorage.setItem('userName', userName); // Save the user name to local storage
+		localStorage.setItem('userEmail', email); // Save email to local storage
         navigate(`/WelcomeUser/${userId}`);
     };
 
@@ -53,7 +54,7 @@ export default function Login() {
         try {
             const data = await sendRequest();
             // Passes the user's ID and token to the /welcome page when logging in
-            handleSuccessfulLogin(data._id, data.token, data.name);
+            handleSuccessfulLogin(data._id, data.token, data.name, data.email);
         } catch (error) {
             console.error(error);
         }
