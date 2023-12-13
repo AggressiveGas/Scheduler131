@@ -48,11 +48,11 @@ function findCommonMeetingTimes(availabilitylist) {
       const numUsers = users.length;
       const commonTimes = {};
       Object.keys(schedule).forEach(day => {
-        if(schedule[day].length != 0){
             commonTimes[day] = schedule[day]
             .map((count, index) => (count === numUsers ? index : null))
             .filter(index => index !== null);
-        }
+            if (commonTimes[day].length == 0)
+                delete commonTimes[day];
       });
     
       return commonTimes;
