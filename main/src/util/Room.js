@@ -426,51 +426,51 @@ const handleCreateMeetingSubmit = async () => {
               ))}
             </p>
 
-
-            <a href="#" onClick={handleAvailability}
-                className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
+          {/* Button to create a meeting*/}
+          <button
+              className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300 w-full"
+              onClick={handleAvailability}
             >  
-                Add your Availability
-            </a>
-
+              Add your Availability
+            </button>
           {/* Button to create a meeting*/}
             <button
-              className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
+              className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300 w-full"
               onClick={handleCreateMeeting}
             >  
               Schedule Meeting
             </button>
             {/* Button to fetch and show common availability */}
             <button
-              className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
+              className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300 w-full"
               onClick={() => fetchCommonAvailability(selectedRoom)}
             >  
               Show Common Availability
             </button>
-
+            <p className=""> ________________________________________</p>
+            <p className="pb-2 font-bold">Common Availability:</p>
             {/* Display common availability if available */}
-            {commonAvailability && (
-                          <div className="mt-4">
-                            <p className='pb-2'><b>Common Availability</b></p>
-                            {/* Loop through the days and display common availability for each day */}
-                            {Object.keys(commonAvailability).map((day) => (
-                              <div key={day}>
-                                <p>{day}</p>
-                                <ul>
-                                  {commonAvailability[day].map((interval) => (
-                                    <li key={interval}>
-                                      {/* Convert interval back to the proper time and display */}
-                                      {generateTimeSlots()[interval]}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+              {commonAvailability && (
+                <div className="mt-4 overflow-y-auto max-h-40 text-center">
+                  {/* Loop through the days and display common availability for each day */}
+                    {Object.keys(commonAvailability).map((day) => (
+                      <div key={day} className="mb-4">
+                        <p className="font-bold">{day}</p>
+                        <div className="flex flex-wrap justify-center">
+                          {commonAvailability[day].map((interval) => (
+                            <div key={interval} className="mx-2 my-1">
+                              {/* Convert interval back to the proper time and display */}
+                              {generateTimeSlots()[interval]}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center">
@@ -690,12 +690,16 @@ const handleCreateMeetingSubmit = async () => {
                   </div>
 
                   {/* Create Meeting button */}
-               <button
-                  className="bg-green-500 hover:bg-green-700 text-white px-10 py-2 rounded-lg mt-6 mb-2 ml-20"
-                  onClick={handleCreateMeetingSubmit}>
-                    
-                  Create
-                </button>
+                    <button
+                      className="bg-green-500 hover:bg-green-700 text-white px-10 py-2 rounded-lg mt-6 mb-2 ml-20"
+                      onClick={() => {
+                        handleCreateMeetingSubmit();
+                        const customMessage = "Meeting has been scheduled"
+                        alert(customMessage);
+                      }}
+                    >
+                      Create
+                    </button>
                   </PopoverContent>
                   </Popover>
                 </div>
@@ -813,8 +817,14 @@ const handleCreateMeetingSubmit = async () => {
                          
                   <button
                     className="bg-red-500 hover:bg-red-700 text-white px-10 py-2 rounded-lg mt-6 mb-2 ml-20"
-                    onClick={handleAvailabilitySubmit}>
-                      Apply
+                    onClick={() => {
+                      handleAvailabilitySubmit();
+                      const customMessage = "Availability has been scheduled";
+                      // just lets user know the button worked
+                      alert(customMessage);
+                    }}
+                  >
+                    Apply
                   </button>
                  
                 </PopoverContent>
