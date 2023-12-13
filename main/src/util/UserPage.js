@@ -157,24 +157,24 @@ export default function UserPage() {
       </div>
 
       <div className="h-96 w-96 sm:px-5">
-        <h1 className="font-semibold">Schedule for {selectDate.toDate().toDateString()}</h1>
-        {meetings.length > 0 ? (
-          <ul>
-            {meetings.map((meeting) => (
-              <li key={meeting._id}>
-				 <p>-------------------------------------</p>
-				<p>You have a meeting scheduled on:</p>
-				<p>Date: {meeting.day}</p>
-                <p>Start Time: {convertTimeSlotToTime(meeting.start)}</p>
-                <p>End Time: {convertTimeSlotToTime(meeting.end)}</p>
-                <p>-------------------------------------</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-400">No meetings for today.</p>
-        )}
-      </div>
+        {/*<h1 className="font-semibold">Schedule for {selectDate.toDate().toDateString()}</h1> */}{/*old display next to calendar*/}
+        <h1 className="font-semibold text-center mb-2">Scheduled Meetings</h1>
+          {meetings.length > 0 ? (
+            <ul>
+              {meetings.map((meeting, index) => (
+                <li key={meeting._id}>
+                  <div className="font-sans-serif bg-red-100 p-2.5 rounded-md mb-3 text-center">
+                    <p>Date: {meeting.day}</p>
+                    <p>Start Time: {convertTimeSlotToTime(meeting.start)}</p>
+                    <p>End Time: {convertTimeSlotToTime(meeting.end)}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400">No meetings for today.</p>
+          )}
+        </div>
     </div>
   );
 }
