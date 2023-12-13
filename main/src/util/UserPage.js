@@ -92,7 +92,7 @@ export default function UserPage() {
   return (
     <div className="flex gap-10 sm:divide-x justify-center px-6 py-12 sm:w-1/2 mx-auto items-center sm:flex-row flex-col">
       <div className="w-96 h-96 ">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center pb-4">
           <h1 className="select-none font-semibold">
             {months[today.month()]}, {today.year()}
           </h1>
@@ -162,9 +162,9 @@ export default function UserPage() {
 
       <div className="h-96 w-96 sm:px-5">
          {/*<h1 className="font-semibold">Schedule for {selectDate.toDate().toDateString()}</h1> */}{/*old display next to calendar*/}
-        <h1 className="font-semibold text-center mb-2">Scheduled Meetings🟢</h1>
+        <h1 className="font-semibold flex justify-center items-center pb-4 border-b">Scheduled Meetings</h1>
         {meetings.length > 0 ? (
-          <ul>
+          <ul className="pt-2">
             {meetings.map((meeting, index) => (
               <li key={meeting._id}>
                 <div className="font-sans-serif bg-red-100 p-2.5 rounded-md mb-3 text-center">

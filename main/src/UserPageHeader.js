@@ -289,7 +289,7 @@ export default function UserPageHeader() {
               type="button"
               onClick={toggleDropdown}
             >
-              User settings{' '}
+              Account{' '}
               <svg
                 className={`w-2.5 h-2.5 ms-3 ${dropdownOpen ? 'rotate-180' : ''}`}
                 aria-hidden="true"
@@ -304,32 +304,38 @@ export default function UserPageHeader() {
             <div
               id="dropdown"
               className={`absolute z-10 ${dropdownOpen ? 'block' : 'hidden'} bg-red-100 border border-red-300 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 mt-2`}
-              style={{ width: 'calc(100%)' }}
+              style={{ width: 'calc(170%)' }}
             >
               <ul className="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownButton">
-                <li>
-                  {/* dropdown options below */}
+                {/* dropdown options below */}
+
+                <li className= "block px-4 py-2 text-sm text-gray-700">
+                  <p>{localStorage.getItem('userName')}</p>
+                  <strong>{localStorage.getItem('userEmail')}</strong>
                 </li>
+
                 <li>
                    {/* delete account*/}
-                   <a
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                      onClick={handleDeleteAccount}
-                    >
-                      Delete Account
-                  </a>
+                <a
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  onClick={handleDeleteAccount}
+                >
+                  Delete Account
+                </a>
                 </li>
               </ul>
+
               <div className="py-2">
                 {/* logout*/}
                 <a
                   to="/login"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  className="border-t border-red-300 block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   onClick = { logout }
-               >
+                >
                   Log out
                 </a>
               </div>
+
             </div>
           </div>
         </div>

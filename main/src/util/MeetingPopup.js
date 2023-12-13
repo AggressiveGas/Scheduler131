@@ -20,10 +20,10 @@ const MeetingPopup = ({ meeting, onClose }) => {
   return (
     <div className="meeting-popup">
       <div className="popup-content">
-        <p>📅 {meeting.day}</p>
-        <p>⏰: {convertTimeSlotToTime(meeting.start)}</p>
-        <p>⏰: {convertTimeSlotToTime(meeting.end)}</p>
-        <button className="close-button" onClick={onClose}>
+        <p className="text-sm pb-2">📅 {meeting.day}</p>
+        <p className="justify-start text-sm pb-2">⏰: {convertTimeSlotToTime(meeting.start)}</p>
+        <p className="text-sm">⏰: {convertTimeSlotToTime(meeting.end)}</p>
+        <button className="close-button text-sm" onClick={onClose}>
           Close
         </button>
       </div>
