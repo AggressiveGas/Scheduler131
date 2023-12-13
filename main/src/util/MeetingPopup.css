@@ -17,17 +17,16 @@
     font-weight: bold; /* Bold text */
   }
   
-  button {
+  .close-button {
     background-color: #ff0000; /* Red button color */
     color: #fff; /* White button text color */
-    padding: 8px 16px;
+    padding: 3px 7px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
   }
   
-  button:hover {
+  .close-button:hover {
     background-color: #cc0000; /* Darker red hover color */
   }
-  
