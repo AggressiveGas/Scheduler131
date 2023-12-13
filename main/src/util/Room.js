@@ -447,8 +447,8 @@ const handleCreateMeetingSubmit = async () => {
             >  
               Show Common Availability
             </button>
-            <p className=""> ________________________________________</p>
-            <p className="pb-2 font-bold">Common Availability:</p>
+            <br ></br>
+            <p className="border-t-2 px-10 pb-2 pt-2 font-bold">Common Availability:</p>
             {/* Display common availability if available */}
               {commonAvailability && (
                 <div className="mt-4 overflow-y-auto max-h-40 text-center">
