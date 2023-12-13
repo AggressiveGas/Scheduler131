@@ -4,7 +4,6 @@ const meetingSchema = new mongoose.Schema({
     roomcode: {
         type: String,
         required: true,
-        unique: true,
     },
     day: {
         type: String,
