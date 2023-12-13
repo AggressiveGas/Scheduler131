@@ -29,7 +29,12 @@ const Room = () => {
   const [from, setFrom] = useState("0");
   const [to, setTo] = useState("0");
   const [commonAvailability, setCommonAvailability] = useState(null); //holds common availability
+  const [showCreateMeetingPopup, setShowCreateMeetingPopup] = useState(false);
+  const [meetingDate, setMeetingDate] = useState(new Date());
 
+  
+
+  
   //trying to split the date so that it can later be used for comparisons
   const SplitDate = (defaultValue) => {
     const arrayDate = defaultValue.toLocaleDateString().split("/");
@@ -57,11 +62,7 @@ const Room = () => {
     setShowPopup(false); // Close the main popup after clicking create --SideNote: I did this because don't want multiple windows show up and making it confusing for the user
     setShowAvailabilityPopup(true); // Show the "Availability" popup
     setSelectedRoom(false);
-
-    // Fetch common availability when the Availability popup is opened
-    if (selectedRoom) {
-      fetchCommonAvailability(selectedRoom);
-    }
+    
   };
 
 
@@ -263,18 +264,6 @@ const handleAvailabilitySubmit = async () => {
     const startIntervals = timeToIntervals(startTime);
     const endIntervals = timeToIntervals(endTime);
 
-    /* The old json format sent to backend changed it because we're nuking weekly and the label
-    const availabilityData = {
-      label: 'Users Selected Availability',
-      weeklyAvailability: [
-        {
-          day: day,
-          intervals: [{ start: startIntervals, end: endIntervals }]
-        }
-      ]
-    };
-    */
-
     const availabilityData = {
       day: day,
       intervals: [
@@ -310,7 +299,59 @@ const handleAvailabilitySubmit = async () => {
   }
 };
 
-  
+
+const handleCreateMeeting = () => {
+  setShowPopup(false);
+  setShowCreateMeetingPopup(true);
+  setMeetingDate(new Date());
+};
+
+const handleCreateMeetingSubmit = async () => {
+  try {
+    // DATE FORMATTING AND STUFFS OK
+    const day = format(date, "MM-dd-yyyy");
+    const startTime = moment(from, ["h:mm A"]).format("HH:mm");
+    const endTime = moment(to, ["h:mm A"]).format("HH:mm");
+    const startIntervals = timeToIntervals(startTime);
+    const endIntervals = timeToIntervals(endTime);
+
+    // Pass selectedRoom directly to the function
+    const room = selectedRoom;
+
+    const meetingData = {
+      roomcode: room.joincode,
+      day: day,
+      start: startIntervals,
+      end: endIntervals,
+    };
+
+    console.log('Meeting Payload:', meetingData);
+
+    // grab userid and token
+    const userTokenHere = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
+
+    const response = await axios.post(
+      `http://localhost:8080/api/meetings/${room.joincode}`,
+      meetingData,
+      {
+        headers: {
+          Authorization: `Bearer ${userTokenHere}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    // just logs to let know if post went through or not
+    console.log('Meeting submitted successfully:', response.data);
+  } catch (error) {
+    console.error('Error submitting meeting:', error.message);
+  }
+};
+
+
+
+
   // Function to fetch and set common availability
   const fetchCommonAvailability = async (room) => {
     try {
@@ -392,10 +433,13 @@ const handleAvailabilitySubmit = async () => {
                 Add your Availability
             </a>
 
-
-
-
-            <p className='pt-4'><b>Group's Availability</b></p>
+          {/* Button to create a meeting*/}
+            <button
+              className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
+              onClick={handleCreateMeeting}
+            >  
+              Schedule Meeting
+            </button>
             {/* Button to fetch and show common availability */}
             <button
               className="block rounded-lg px-3 py-2 mt-2 text-sm font-semibold leading-6 text-gray-900 bg-gray-100 hover:bg-gray-300"
@@ -547,6 +591,117 @@ const handleAvailabilitySubmit = async () => {
           </div>
         </div>
       )}
+
+{/*CREATE MEETING POPUP*/}
+{showCreateMeetingPopup && (
+  <div className="fixed inset-0 flex items-center justify-center">
+    <div className="bg-white p-16 rounded-lg shadow-md relative w-80 flex flex-col items-center border border-gray-300">
+      {/* Close button */}
+      <button
+        className="text-red-600 hover:text-red-800 absolute top-0 right-2"
+        onClick={() => setShowCreateMeetingPopup(false)}
+      >
+        <span className="text-2xl font-bold">&times;</span>
+      </button>
+
+      <p className="text-lg font-semibold mb-4">Create a Meeting</p>
+
+      {/* Date and time picker components */}
+      <div className="p-26">
+        <Popover placement="right">
+          {/* Use the same Input component for date and time pickers */}
+          <PopoverHandler>
+            <Input
+              onChange={() => null}
+              value={meetingDate ? format(meetingDate, "PPP") : "Select a Date and Time"}
+              className="rounded-lg"
+            />
+          </PopoverHandler>
+          <PopoverContent>
+                    {/*Date/Day picker */}
+                    <DayPicker
+                    mode="single"
+                    selected={meetingDate}
+                    onSelect={(date) => setMeetingDate(date)}
+                    value = {setDate}
+                    showOutsideDays
+                    showTimeSelect
+                    timeIntervals = {10}
+                    timeFormat = "hh:mm"
+                   
+                    className="border-0"
+                    classNames={{
+                      caption: "flex justify-center py-2 mb-4 relative items-center",
+                      caption_label: "text-sm font-medium text-gray-900",
+                      nav: "flex items-center",
+                      nav_button:
+                        "h-6 w-6 bg-transparent hover:bg-blue-gray-50 p-1 rounded-full transition-colors duration-300",
+                      nav_button_previous: "absolute left-1.5",
+                      nav_button_next: "absolute right-1.5",
+                      table: "w-full border-collapse",
+                      head_row: "flex font-medium text-gray-900",
+                      head_cell: "m-0.5 w-9 font-normal text-sm",
+                      row: "flex w-full mt-2",
+                      cell: "text-gray-600 rounded-full h-9 w-9 text-center text-sm p-0 m-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-full [&:has([aria-selected].day-outside)]:bg-gray-900/20 [&:has([aria-selected].day-outside)]:text-white [&:has([aria-selected])]:bg-gray-900/50 first:[&:has([aria-selected])]:rounded-full last:[&:has([aria-selected])]:rounded-full focus-within:relative focus-within:z-20",
+                      day: "h-9 w-9 p-0 font-normal",
+                      day_range_end: "day-range-end",
+                      day_selected:
+                        "rounded-full bg-gray-900 text-white hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white",
+                      day_today: "rounded-full bg-gray-200 text-gray-900",
+                      day_outside:
+                        "day-outside text-gray-500 opacity-50 aria-selected:bg-gray-500 aria-selected:text-gray-900 aria-selected:bg-opacity-10",
+                      day_disabled: "text-gray-500 opacity-50",
+                      day_hidden: "invisible",
+                    }}
+                    components={{
+                      IconLeft: ({ ...props }) => (
+                        <ChevronLeftIcon {...props} className="h-4 w-4 stroke-2" />
+                      ),
+                      IconRight: ({ ...props }) => (
+                        <ChevronRightIcon {...props} className="h-4 w-4 stroke-2" />
+                      ),
+                    }}
+                 
+                  />
+
+
+                  <hr className= "mt-4"></hr>
+
+
+                  {/*Time picker*/}
+                  <div className="mt-4 flex justify-center">
+                    <select id="from" className="p-2 border border-gray-300" onChange={(e) => setFrom(e.target.value)}>
+                      <option value="0">Select Time</option>
+                      {generateTimeSlots().map((time, index) => (
+                        <option key={index} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
+                    <b className="p-2">TO</b>
+                    <select id="toDate" className="p-2 border border-gray-300" onChange={(e) => setTo(e.target.value)}>
+                      <option value="0">Select Time</option>
+                      {generateTimeSlots().map((time, index) => (
+                        <option key={index} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Create Meeting button */}
+               <button
+                  className="bg-green-500 hover:bg-green-700 text-white px-10 py-2 rounded-lg mt-6 mb-2 ml-20"
+                  onClick={handleCreateMeetingSubmit}>
+                    
+                  Create
+                </button>
+                  </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+            </div>
+          )}
 {/*Below is the Availability popup box alongside its formatting*/}
       {showAvailabilityPopup && (
         <div className="fixed inset-0 flex items-center justify-center">
@@ -675,6 +830,5 @@ const handleAvailabilitySubmit = async () => {
 
 
 export default Room;
-
 
 
