@@ -69,6 +69,22 @@ export default function UserPage() {
     }
   };
 
+
+  //converting the meeting start and end times(because a normal user doesnt know what the 144 timeslots converts to lol):
+  const convertTimeSlotToTime = (timeSlot) => {
+	const totalMinutes = timeSlot * 10;
+	const hours = Math.floor(totalMinutes / 60);
+	const minutes = totalMinutes % 60;
+  
+	//AM PM STUFFS
+	const period = hours >= 12 ? 'PM' : 'AM';
+	const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+	const formattedMinutes = String(minutes).padStart(2, '0');
+  
+	return `${formattedHours}:${formattedMinutes} ${period}`;
+  };
+  
+  
   return (
     <div className="flex gap-10 sm:divide-x justify-center px-6 py-12 sm:w-1/2 mx-auto items-center sm:flex-row flex-col">
       <div className="w-96 h-96 ">
@@ -149,8 +165,8 @@ export default function UserPage() {
 				 <p>-------------------------------------</p>
 				<p>You have a meeting scheduled on:</p>
 				<p>Date: {meeting.day}</p>
-                <p>Start Time: {meeting.start}</p>
-                <p>End Time: {meeting.end}</p>
+                <p>Start Time: {convertTimeSlotToTime(meeting.start)}</p>
+                <p>End Time: {convertTimeSlotToTime(meeting.end)}</p>
                 <p>-------------------------------------</p>
               </li>
             ))}
