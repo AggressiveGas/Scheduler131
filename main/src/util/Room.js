@@ -309,7 +309,7 @@ const handleCreateMeeting = () => {
 const handleCreateMeetingSubmit = async () => {
   try {
     // DATE FORMATTING AND STUFFS OK
-    const day = format(date, "MM-dd-yyyy");
+    const day = format(meetingDate, "MM-dd-yyyy");
     const startTime = moment(from, ["h:mm A"]).format("HH:mm");
     const endTime = moment(to, ["h:mm A"]).format("HH:mm");
     const startIntervals = timeToIntervals(startTime);
