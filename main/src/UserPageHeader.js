@@ -89,6 +89,7 @@ export default function UserPageHeader() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userId');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
   
     // Navigate to the login page
     navigate('/login');
@@ -424,7 +425,7 @@ export default function UserPageHeader() {
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <p className="text-sm leading-6 text-gray-900" style={{ whiteSpace: 'pre' }}>
-              Welcome User!     Note: In the future, want to display the username instead of "user"
+              Welcome {localStorage.getItem('userName')}, to your homepage!
           </p>
 
           </div>
