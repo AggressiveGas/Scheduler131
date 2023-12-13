@@ -1,0 +1,33 @@
+.meeting-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f1f1f1; /* Grey background color */
+    padding: 20px;
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    z-index: 9999;
+    max-width: 300px; /* Adjust the width as needed */
+    text-align: center;
+  }
+  
+  .popup-content {
+    color: #333; /* Dark grey text color */
+    font-weight: bold; /* Bold text */
+  }
+  
+  button {
+    background-color: #ff0000; /* Red button color */
+    color: #fff; /* White button text color */
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  button:hover {
+    background-color: #cc0000; /* Darker red hover color */
+  }
+  
