@@ -14,7 +14,7 @@
     box-sizing: border-box;
     width: 200px; /* Set a fixed width for each button (16.666% is 1/6 for 6 buttons in a row) */
     height: 130px; /* Set a fixed height */
-    background-color: #1894e7;
+    background-color: #475c69;
     margin-bottom: 0px; /* Adjust the vertical gap */
     color: #fff;
     font-weight: bold;
